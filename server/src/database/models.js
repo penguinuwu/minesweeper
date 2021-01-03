@@ -13,7 +13,7 @@ const GameSchema = new Schema({
   shape: String,                    // shape of board (square, hexagon, etc)
   height: Number,
   width: Number,
-  bomb_count: Number,
+  bombCount: Number,
   start: Date,
   end: Date,
   players: [Schema.Types.ObjectId], // [User._id]
@@ -21,7 +21,7 @@ const GameSchema = new Schema({
   data: {
     lives: Schema.Types.Mixed,      // max lives per user { User._id: Number }
     explosions: Schema.Types.Mixed, // explosions per user { User._id: Number }
-    bomb_locations: [[Number]],
+    bombLocations: [[Number]],
     solved: [[String]],
     unsolved: [[String]]
   }
@@ -29,7 +29,7 @@ const GameSchema = new Schema({
 const GameModel = mongoose.model('Game', GameSchema);
 
 const LobbySchema = new Schema({
-  games: [Schema.Types.ObjectId] // User.id
+  games: [Schema.Types.ObjectId]    // User.id
 });
 const LobbyModel = mongoose.model('Lobby', LobbySchema);
 
