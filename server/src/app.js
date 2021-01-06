@@ -1,11 +1,8 @@
 const express = require('express');
-const port = process.env.PORT;
-
-const database = require('./database/connection');
-const { User, Game, Lobby } = require('./database/models');
-
 const session = require('express-session');
+const passport = require('passport');
 const MongoStore = require('connect-mongo')(session);
+const database = require('./config/database');
 const SessionStore = new MongoStore({
   mongooseConnection: database,
   collection: 'session'
@@ -13,6 +10,11 @@ const SessionStore = new MongoStore({
 
 const app = express();
 
+// use express built-in body-parser
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
+
+// set up connect-mongo session store
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -24,11 +26,15 @@ app.use(session({
   }
 }));
 
-app.get('/api/', (req, res) => {
-  res.send(`Hello! ${req.session}`);
-  console.log(req.session);
-});
+// configure passport
+require('./config/passport');
+app.use(passport.initialize());
+app.use(passport.session());
 
+const routes = require('./routes');
+app.use(routes);
+
+const port = process.env.PORT;
 app.listen(port, () => {
   console.log(`Listening at http://localhost:${port}`);
 });
