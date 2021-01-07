@@ -1,5 +1,6 @@
 const express = require('express');
 const session = require('express-session');
+const cors = require('cors');
 const passport = require('passport');
 const MongoStore = require('connect-mongo')(session);
 const database = require('./config/database');
@@ -9,6 +10,12 @@ const SessionStore = new MongoStore({
 });
 
 const app = express();
+
+// enable cross 
+app.use(cors({
+  origin: process.env.CLIENT_URL,
+  credentials: true
+}))
 
 // use express built-in body-parser
 app.use(express.json());
