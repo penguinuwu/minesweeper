@@ -19,7 +19,7 @@ function Logout() {
 
       // success
       if (res.data === 'Success.')
-        localStorage.setItem('username', null);
+        localStorage.removeItem('username');
       setStatus(res.data);
 
     } catch (err) {
