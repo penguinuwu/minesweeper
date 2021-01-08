@@ -3,7 +3,7 @@ import axios from 'axios';
 import UserContext from '../Contexts/UserContext';
 
 function Register() {
-  const context = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
   const [status, setStatus] = useState(null);
@@ -21,13 +21,17 @@ function Register() {
       });
       setStatus(res.data);
     } catch (err) {
-      setStatus('Error: cannot register user.');
+      if (err.response && err.response.status === 403) {
+        setStatus(err.response.data);
+      } else {
+        setStatus('Error: cannot register user.');
+      }
     }
   }
 
   // if user is not logged in
   // then return registration from
-  if (!context.user) {
+  if (!user) {
     return (
       <div>
         <h1>Register:</h1>

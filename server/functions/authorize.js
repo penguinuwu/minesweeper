@@ -3,21 +3,29 @@ const passport = require('passport');
 const login = (req, res, next) => {
   // redirect to home if logged in
   if (req.isAuthenticated())
-    return res.redirect('/home');
+    return res.status(403).send('You are already logged in.');
+
+  return passport.authenticate('local', (err, user, info) => {
+    if (err)
+      return next(err);
+    if (!user)
+      return res.status(403).send('Incorrect credentials.');
   
-  return passport.authenticate('local', {
-    successRedirect: '/home',
-    failureRedirect: '/login'
+    req.logIn(user, (err) => {
+      if (err)
+        return next(err);
+      return res.status(200).send('Success.');
+    });
   })(req, res, next);
 };
 
 const logout = (req, res, next) => {
   // redirect to login if logged out
   if (!req.isAuthenticated())
-    return res.redirect('/login');
+    return res.status(403).send('You are not logged in.');
     
-  req.logout();
-  return res.redirect('/home');
+  req.logOut();
+  return res.status(200).send('Success.');
 };
 
 module.exports = {

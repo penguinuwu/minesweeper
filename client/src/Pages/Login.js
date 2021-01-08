@@ -3,7 +3,7 @@ import axios from 'axios';
 import UserContext from '../Contexts/UserContext';
 
 function Login() {
-  const context = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
   const [status, setStatus] = useState(null);
@@ -19,17 +19,21 @@ function Login() {
         },
         withCredentials: true
       });
+      if (res.data === 'Success.')
+        setUser(username);
       setStatus(res.data);
-      // todo: handle success
-      if (res.data === 'Success.') context.setUser(username);
     } catch (err) {
-      setStatus('Error: cannot authenticate user.');
+      if (err.response && err.response.status === 403) {
+        setStatus(err.response.data);
+      } else {
+        setStatus('Error: cannot authenticate user.');
+      }
     }
   }
 
   // if user is not logged in
   // then return login from
-  if (!context.user) {
+  if (!user) {
     return (
       <div>
         <h1>Login:</h1>
@@ -53,6 +57,16 @@ function Login() {
         </div>
         <button onClick={requestLogin}>Login</button>
         <p>{status}</p>
+      </div>
+    );
+  }
+
+  // if user just logged in
+  // then display success message
+  if (status === 'Success.') {
+    return (
+      <div>
+        <p>{user} you have successfully logged in!</p>
       </div>
     );
   }

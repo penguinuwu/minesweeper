@@ -3,7 +3,7 @@ import axios from 'axios';
 import UserContext from '../Contexts/UserContext';
 
 function Logout() {
-  const context = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [status, setStatus] = useState(null);
 
   async function requestLogout() {
@@ -15,15 +15,21 @@ function Logout() {
       });
       setStatus(res.data);
       // todo: handle success
-      if (res.data === 'Success.') context.setUser(null);
+      if (res.data === 'Success.') {
+        setUser(null);
+      }
     } catch (err) {
-      setStatus('Error: cannot logout user.');
+      if (err.response && err.response.status === 403) {
+        setStatus(err.response.data);
+      } else {
+        setStatus('Error: cannot logout user.');
+      }
     }
   }
 
   // if user is not logged in
   // then return logout button
-  if (context.user) {
+  if (user) {
     return (
       <div>
         <button onClick={requestLogout}>Logout</button>

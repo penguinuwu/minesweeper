@@ -38,30 +38,30 @@ const createUser = async (name, pass) => {
 const register = (req, res, next) => {
   // redirect to home if logged in
   if (req.isAuthenticated())
-    return res.redirect('/home');
+    return res.status(401).send('You are already logged in.');
   
   const name = req.body.username;
   const pass = req.body.password;
 
   // username and password must not be empty
   if (!name || !pass)
-    return res.send('Credentials must not be empty.');
+    return res.status(401).send('Credentials must not be empty.');
 
   // username must be [2, 16] characters
   if (!(2 <= pass.length && pass.length <= 16))
-    return res.send('Username must be 2 to 16 characters long.');
+    return res.status(401).send('Username must be 2 to 16 characters long.');
 
   // password must be [6, 30] characters
   if (!(6 <= pass.length && pass.length <= 30))
-    return res.send('Password must be 6 to 30 characters long.');
+    return res.status(401).send('Password must be 6 to 30 characters long.');
 
   if (!uniqueUsername(name))
-    return res.send('This username has been taken.');
+    return res.status(401).send('This username has been taken.');
 
   if (!createUser(name, pass))
-    return res.send('Error: cannot register user.');
+    return res.status(401).send('Error: cannot register user.');
 
-  return res.redirect('/home');
+  return res.status(200).send('Success.');
 };
 
 module.exports = register;
