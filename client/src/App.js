@@ -1,6 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
-import UserContext from './Contexts/UserContext';
 import './App.css';
 import Home from './Pages/Home';
 import Register from './Pages/Register';
@@ -9,22 +8,17 @@ import Logout from './Pages/Logout';
 import Play from './Pages/Play';
 
 function App() {
-  const [user, setUser] = useState(null);
-  const value = useMemo(() => ({ user, setUser }), [user]);
-
   return (
-    <UserContext.Provider value={value}>
-      <BrowserRouter>
-        <Switch>
-          <Redirect exact from='/' to='/home' />
-          <Route exact path='/home' component={Home} />
-          <Route exact path='/register' component={Register} />
-          <Route exact path='/login' component={Login} />
-          <Route exact path='/logout' component={Logout} />
-          <Route exact path='/play' component={Play} />
-        </Switch>
-      </BrowserRouter>
-    </UserContext.Provider>
+    <BrowserRouter>
+      <Switch>
+        <Redirect exact from='/' to='/home' />
+        <Route exact path='/home' component={Home} />
+        <Route exact path='/register' component={Register} />
+        <Route exact path='/login' component={Login} />
+        <Route exact path='/logout' component={Logout} />
+        <Route exact path='/play' component={Play} />
+      </Switch>
+    </BrowserRouter>
   );
 }
 

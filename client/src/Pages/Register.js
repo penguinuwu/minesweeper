@@ -1,15 +1,18 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import UserContext from '../Contexts/UserContext';
 
 function Register() {
-  const { user } = useContext(UserContext);
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
   const [status, setStatus] = useState(null);
 
   async function requestRegister() {
     try {
+      // do not request register if the user is already logged in
+      if (localStorage.getItem('username'))
+        return;
+
+      // send post request
       let res = await axios({
         method: 'post',
         url: `${process.env.REACT_APP_API_URL}/api/register`,
@@ -19,11 +22,16 @@ function Register() {
         },
         withCredentials: true
       });
+
+      // success
       setStatus(res.data);
+
     } catch (err) {
       if (err.response && err.response.status === 403) {
+        // registration fail
         setStatus(err.response.data);
       } else {
+        // server error
         setStatus('Error: cannot register user.');
       }
     }
@@ -31,7 +39,7 @@ function Register() {
 
   // if user is not logged in
   // then return registration from
-  if (!user) {
+  if (!localStorage.getItem('username')) {
     return (
       <div>
         <h1>Register:</h1>

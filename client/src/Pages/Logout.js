@@ -1,39 +1,55 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import UserContext from '../Contexts/UserContext';
 
 function Logout() {
-  const { user, setUser } = useContext(UserContext);
   const [status, setStatus] = useState(null);
 
   async function requestLogout() {
     try {
+      // do not request logout if the user is already logged out
+      if (!localStorage.getItem('username'))
+        return;
+
+      // send post request
       let res = await axios({
         method: 'post',
         url: `${process.env.REACT_APP_API_URL}/api/logout`,
         withCredentials: true
       });
+
+      // success
+      if (res.data === 'Success.')
+        localStorage.setItem('username', null);
       setStatus(res.data);
-      // todo: handle success
-      if (res.data === 'Success.') {
-        setUser(null);
-      }
+
     } catch (err) {
       if (err.response && err.response.status === 403) {
+        // logout fail
         setStatus(err.response.data);
       } else {
+        // server error
         setStatus('Error: cannot logout user.');
       }
     }
   }
 
-  // if user is not logged in
+  // if user is logged in
   // then return logout button
-  if (user) {
+  if (localStorage.getItem('username')) {
     return (
       <div>
         <button onClick={requestLogout}>Logout</button>
         <p>{status}</p>
+      </div>
+    );
+  }
+
+  // if the user just logged out, the status cannot be null,
+  // so display success message
+  if (status) {
+    return (
+      <div>
+        <p>You have successfully logged out - see you next time!</p>
       </div>
     );
   }

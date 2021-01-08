@@ -1,15 +1,18 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import UserContext from '../Contexts/UserContext';
 
 function Login() {
-  const { user, setUser } = useContext(UserContext);
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
   const [status, setStatus] = useState(null);
 
   async function requestLogin() {
     try {
+      // do not request login if the user is already logged in
+      if (localStorage.getItem('username'))
+        return;
+
+      // send post request
       let res = await axios({
         method: 'post',
         url: `${process.env.REACT_APP_API_URL}/api/login`,
@@ -19,13 +22,18 @@ function Login() {
         },
         withCredentials: true
       });
+
+      // authorization success
       if (res.data === 'Success.')
-        setUser(username);
+        localStorage.setItem('username', username);
       setStatus(res.data);
+
     } catch (err) {
       if (err.response && err.response.status === 403) {
+        // authorization fail
         setStatus(err.response.data);
       } else {
+        // server error
         setStatus('Error: cannot authenticate user.');
       }
     }
@@ -33,7 +41,7 @@ function Login() {
 
   // if user is not logged in
   // then return login from
-  if (!user) {
+  if (!localStorage.getItem('username')) {
     return (
       <div>
         <h1>Login:</h1>
@@ -61,16 +69,18 @@ function Login() {
     );
   }
 
-  // if user just logged in
-  // then display success message
-  if (status === 'Success.') {
+  // if the user just logged in,
+  // the status, username, and localStorage cannot be null,
+  // so display success message
+  if (status) {
     return (
       <div>
-        <p>{user} you have successfully logged in!</p>
+        <p>Welcome {username}, you have successfully logged in!</p>
       </div>
     );
   }
 
+  // otherwise, the user has already logged in
   return (
     <div>
       <p>you are already logged in!</p>
