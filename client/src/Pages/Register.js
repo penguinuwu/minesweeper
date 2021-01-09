@@ -27,7 +27,7 @@ function Register() {
       setStatus(res.data);
 
     } catch (err) {
-      if (err.response && err.response.status === 403) {
+      if (err.response && err.response.data) {
         // registration fail
         setStatus(err.response.data);
       } else {

@@ -23,7 +23,7 @@ function Logout() {
       setStatus(res.data);
 
     } catch (err) {
-      if (err.response && err.response.status === 403) {
+      if (err.response && err.response.data) {
         // logout fail
         setStatus(err.response.data);
       } else {

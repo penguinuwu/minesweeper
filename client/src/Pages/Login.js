@@ -29,7 +29,7 @@ function Login() {
       setStatus(res.data);
 
     } catch (err) {
-      if (err.response && err.response.status === 403) {
+      if (err.response && err.response.data) {
         // authorization fail
         setStatus(err.response.data);
       } else {
