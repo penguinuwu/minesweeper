@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
+import UserContext from '../Contexts/UserContext';
 
 function Login() {
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
   const [status, setStatus] = useState(null);
+  const { user, setUser } = useContext(UserContext);
 
   async function requestLogin() {
     try {
       // do not request login if the user is already logged in
-      if (localStorage.getItem('username'))
+      if (user || localStorage.getItem('username'))
         return;
 
       // send post request
@@ -24,8 +26,10 @@ function Login() {
       });
 
       // authorization success
-      if (res.data === 'Success.')
+      if (res.data === 'Success.') {
         localStorage.setItem('username', username);
+        setUser(username);
+      }
       setStatus(res.data);
 
     } catch (err) {
@@ -41,7 +45,7 @@ function Login() {
 
   // if user is not logged in
   // then return login from
-  if (!localStorage.getItem('username')) {
+  if (!user && !localStorage.getItem('username')) {
     return (
       <div>
         <h1>Login:</h1>

@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
+import UserContext from '../Contexts/UserContext';
 
 function Register() {
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
   const [status, setStatus] = useState(null);
+  const { user } = useContext(UserContext);
 
   async function requestRegister() {
     try {
       // do not request register if the user is already logged in
-      if (localStorage.getItem('username'))
+      if (user || localStorage.getItem('username'))
         return;
 
       // send post request

@@ -1,62 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
+import UserContext from '../Contexts/UserContext';
 
 function Logout() {
   const [status, setStatus] = useState(null);
+  const { user, setUser } = useContext(UserContext);
 
-  async function requestLogout() {
-    try {
-      // do not request logout if the user is already logged out
-      if (!localStorage.getItem('username'))
-        return;
+  useEffect(() => {
+    async function requestLogout() {
+      try {
+        // do not request logout if the user is already logged out
+        if (!user && !localStorage.getItem('username')) {
+          setStatus('You are not logged in!');
+          return;
+        }
 
-      // send post request
-      let res = await axios({
-        method: 'post',
-        url: `${process.env.REACT_APP_API_URL}/api/logout`,
-        withCredentials: true
-      });
+        // send post request
+        let res = await axios({
+          method: 'post',
+          url: `${process.env.REACT_APP_API_URL}/api/logout`,
+          withCredentials: true
+        });
 
-      // success
-      if (res.data === 'Success.')
-        localStorage.removeItem('username');
-      setStatus(res.data);
-
-    } catch (err) {
-      if (err.response && err.response.data) {
-        // logout fail
-        setStatus(err.response.data);
-      } else {
-        // server error
-        setStatus('Error: cannot logout user.');
+        // success
+        if (res.data === 'Success.') {
+          localStorage.removeItem('username');
+          setUser(false);
+        }
+        setStatus('You have successfully logged out - see you next time!');
+      } catch (err) {
+        if (err.response && err.response.data) {
+          // logout fail
+          setStatus(err.response.data);
+        } else {
+          // server error
+          setStatus('Error: cannot logout user.');
+        }
       }
     }
-  }
-
-  // if user is logged in
-  // then return logout button
-  if (localStorage.getItem('username')) {
-    return (
-      <div>
-        <button onClick={requestLogout}>Logout</button>
-        <p>{status}</p>
-      </div>
-    );
-  }
-
-  // if the user just logged out, the status cannot be null,
-  // so display success message
-  if (status) {
-    return (
-      <div>
-        <p>You have successfully logged out - see you next time!</p>
-      </div>
-    );
-  }
+    requestLogout();
+  }, [])
 
   return (
     <div>
-      <p>You are not logged in!</p>
+      <p>{status}</p>
     </div>
   );
 }
