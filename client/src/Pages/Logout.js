@@ -28,6 +28,7 @@ function Logout() {
           setUser(false);
         }
         setStatus('You have successfully logged out - see you next time!');
+
       } catch (err) {
         if (err.response && err.response.data) {
           // logout fail
@@ -39,7 +40,7 @@ function Logout() {
       }
     }
     requestLogout();
-  }, [])
+  }, [user, setUser])
 
   return (
     <div>
