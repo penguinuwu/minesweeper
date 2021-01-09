@@ -9,7 +9,7 @@ const login = (req, res, next) => {
     if (err)
       return next(err);
     if (!user)
-      return res.status(403).send('Incorrect credentials.');
+      return res.status(401).send('Incorrect credentials.');
   
     req.logIn(user, (err) => {
       if (err)

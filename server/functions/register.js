@@ -3,7 +3,8 @@ const User = require('../models/user');
 
 const uniqueUsername = async (name) => {
   try {
-    let user = await User.findOne({ username: name })
+    let user = await User.findOne({ username: name });
+    console.log(user);
     if (user) return false;
     return true;
   } catch (err) {
@@ -35,7 +36,7 @@ const createUser = async (name, pass) => {
   }
 };
 
-const register = (req, res, next) => {
+const register = async (req, res, next) => {
   // redirect to home if logged in
   if (req.isAuthenticated())
     return res.status(401).send('You are already logged in.');
@@ -55,7 +56,8 @@ const register = (req, res, next) => {
   if (!(6 <= pass.length && pass.length <= 30))
     return res.status(401).send('Password must be 6 to 30 characters long.');
 
-  if (!uniqueUsername(name))
+  let isUnique = await uniqueUsername(name);
+  if (!isUnique)
     return res.status(401).send('This username has been taken.');
 
   if (!createUser(name, pass))
