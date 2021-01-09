@@ -4,7 +4,6 @@ const User = require('../models/user');
 const uniqueUsername = async (name) => {
   try {
     let user = await User.findOne({ username: name });
-    console.log(user);
     if (user) return false;
     return true;
   } catch (err) {
