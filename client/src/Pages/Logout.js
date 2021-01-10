@@ -19,7 +19,7 @@ function Logout() {
           <div className='class-body text-center fs-2 px-3'>
             {response}
             <a className='btn btn-info' href='/login'>
-              Login <i class='fas fa-sign-in-alt fa-fw'></i>
+              Login <i className='fas fa-sign-in-alt fa-fw'></i>
             </a>
           </div>
         </div>

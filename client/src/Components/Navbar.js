@@ -34,9 +34,9 @@ function renderAuthenticate(user) {
       >
         {username}
       </div>
-      <div className='dropdown-menu' aria-labelledby='userDropdown'>
+      <div className='dropdown-menu dropdown-menu-right dropdown-menu-dark' aria-labelledby='userDropdown'>
         <a className='dropdown-item' href='/logout'>
-          Logout <i class="fas fa-sign-out-alt fa-fw"></i>
+          Logout <i className="fas fa-sign-out-alt fa-fw"></i>
         </a>
       </div>
     </div>

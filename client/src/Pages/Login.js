@@ -45,7 +45,7 @@ function Login() {
   function renderStatus() {
     if (!status) return null;
     return (
-      <div class='alert alert-info mb-1' role='alert'>
+      <div className='alert alert-info mb-1' role='alert'>
         {status}
       </div>
     );
@@ -90,7 +90,7 @@ function Login() {
             {/* submit button */}
             <div className='float-end'>
               <button className='btn btn-info' onClick={requestLogin}>
-                Enter <i class='fas fa-sign-in-alt fa-fw'></i>
+                Enter <i className='fas fa-sign-in-alt fa-fw'></i>
               </button>
             </div>
           </div>
