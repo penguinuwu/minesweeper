@@ -16,7 +16,7 @@ function App() {
   return (
     <UserContext.Provider value={value}>
       <Navbar />
-      <div className='container-fluid mt-2'>
+      <div className='container-fluid'>
         <BrowserRouter>
           <Switch>
             <Redirect exact from='/' to='/home' />

@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 import UserContext from '../Contexts/UserContext';
 
@@ -11,8 +12,7 @@ function Register() {
   async function requestRegister() {
     try {
       // do not request register if the user is already logged in
-      if (user || localStorage.getItem('username'))
-        return;
+      if (user || localStorage.getItem('username')) return;
 
       // send post request
       let res = await axios({
@@ -27,7 +27,6 @@ function Register() {
 
       // success
       setStatus(res.data);
-
     } catch (err) {
       if (err.response && err.response.data) {
         // registration fail
@@ -39,41 +38,77 @@ function Register() {
     }
   }
 
-  // if user is not logged in
-  // then return registration from
-  if (!localStorage.getItem('username')) {
+  function renderStatus() {
+    if (!status) return null;
     return (
-      <div>
-        <h1>Register:</h1>
-        <div>
-          <label for='username'>Username:</label>
-          <input
-            type='text'
-            id='username'
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          ></input>
-        </div>
-        <div>
-          <label for='password'>Password:</label>
-          <input
-            type='password'
-            id='password'
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          ></input>
-        </div>
-        <button onClick={requestRegister}>Register</button>
-        <p>{status}</p>
+      <div class='alert alert-info mb-1' role='alert'>
+        {status}
       </div>
     );
   }
 
-  return (
-    <div>
-      <p>You are already logged in!</p>
-    </div>
-  );
+  // if user is not logged in
+  // then return registration from
+  if (!user && !localStorage.getItem('username')) {
+    if (status === 'Success.') return <Redirect to='/login' />;
+    return (
+      <div className='d-flex my-2 align-items-center justify-content-center vertical-center gradient'>
+        <div className='card p-4 text-light bg-dark rw-30'>
+          <div className='class-header'>
+            <p className='fs-2'>Register</p>
+          </div>
+          <div className='class-body text-center px-3 my-1'>
+            {/* username */}
+            <div className='input-group mb-1'>
+              <span className='input-group-text btn-info'>
+                <i className='fas fa-user fa-fw'></i>
+              </span>
+              <input
+                type='text'
+                className='form-control'
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder='Username'
+              ></input>
+            </div>
+
+            {/* password */}
+            <div className='input-group mb-1'>
+              <span className='input-group-text btn-info'>
+                <i className='fas fa-key fa-fw'></i>
+              </span>
+              <input
+                type='password'
+                className='form-control'
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder='Password'
+              ></input>
+            </div>
+
+            {/* submit button */}
+            <div className='float-end'>
+              <button className='btn btn-info' onClick={requestRegister}>
+                Enter <i class='fas fa-sign-in-alt fa-fw'></i>
+              </button>
+            </div>
+          </div>
+          <div className='card-footer text-center'>
+            {/* possible alerts */}
+            {renderStatus()}
+
+            {/* login reminder */}
+            <p className='m-0'>
+              Have an account?{' '}
+              <a className='text-info' href='/login'>
+                Login here!
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return <Redirect to='/' />;
 }
 
 export default Register;
