@@ -25,12 +25,12 @@ function Login() {
         withCredentials: true
       });
 
+      setStatus(res.data);
       // authorization success
       if (res.data === 'Success.') {
         localStorage.setItem('username', username);
         setUser(username);
       }
-      setStatus(res.data);
     } catch (err) {
       if (err.response && err.response.data) {
         // authorization fail
