@@ -2,6 +2,12 @@ const router = require('express').Router();
 const API_ROUTE = process.env.API_ROUTE;
 
 const wrapper = (io) => {
+  // test routes
+  if (process.env.TEST) {
+    const test = require('../test');
+    router.get('/', test);
+  }
+
   // register user
   const register = require('../bin/register');
   router.post(`${API_ROUTE}/register`, register);
