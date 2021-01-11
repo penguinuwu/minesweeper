@@ -1,4 +1,3 @@
-const passport = require('passport');
 const Strategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
@@ -60,5 +59,4 @@ const initialize = (passport) => {
   passport.deserializeUser(deserialize);
 }
 
-// modules.exports = initialize;
-initialize(passport);
+module.exports = initialize;

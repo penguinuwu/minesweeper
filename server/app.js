@@ -1,17 +1,31 @@
 const express = require('express');
 const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+const http = require('http');
 const cors = require('cors');
 const passport = require('passport');
-const MongoStore = require('connect-mongo')(session);
+
+// set up sessions table in database
 const database = require('./config/database');
 const SessionStore = new MongoStore({
   mongooseConnection: database,
-  collection: 'session'
+  collection: 'sessions'
 });
 
+// configure passport
+require('./config/passport')(passport);
+
+// start express app
 const app = express();
 
-// enable cross 
+// store http server
+const server = http.createServer(app);
+const io = require('socket.io')(server);
+
+// configure custom routes
+const routes = require('./routes')(io);
+
+// enable cross-origin resource sharing
 app.use(cors({
   origin: process.env.CLIENT_URL,
   credentials: true
@@ -33,12 +47,11 @@ app.use(session({
   }
 }));
 
-// configure passport
-require('./config/passport');
+// start passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-const routes = require('./routes');
+// use custom routes
 app.use(routes);
 
 const port = process.env.PORT;
