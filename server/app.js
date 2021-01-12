@@ -28,6 +28,8 @@ const routes = require('./routes')(io);
 // enable cross-origin resource sharing
 app.use(cors({
   origin: process.env.CLIENT_URL,
+  methods: "GET,POST",
+  optionsSuccessStatus: 200,
   credentials: true
 }))
 
