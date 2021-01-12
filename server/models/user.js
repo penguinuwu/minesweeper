@@ -5,7 +5,10 @@ const UserSchema = new Schema({
   username: String,
   email: String,
   hash: String,
-  games: [Schema.Types.ObjectId]    // user's games [Game._id]
+  // user's games [Game._id]
+  games: { type: [Schema.Types.ObjectId], default: [] },
+  // user's past [Game._id]
+  pastGames: { type: [Schema.Types.ObjectId], default: [] }
 });
 
 const UserModel = mongoose.model('User', UserSchema);

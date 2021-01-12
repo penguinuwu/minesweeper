@@ -21,9 +21,7 @@ const createUser = async (name, pass) => {
     // create user
     let newUser = new User({
       username: name,
-      email: '',
-      hash: hash,
-      games: []
+      hash: hash
     });
 
     // store user
