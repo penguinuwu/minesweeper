@@ -14,8 +14,13 @@ const playSolo = async (req, res, next) => {
 
   // if user is logged in, then add user
   if (req.user) {
+    game.data.lives[req.user.id] = game.maxLives;
+    game.data.explosions[req.user.id] = 0;
     game.players.push(req.user.id);
     game.temp = false;
+  } else {
+    game.data.lives['temp'] = game.maxLives;
+    game.data.explosions['temp'] = 0;
   }
 
   // store game

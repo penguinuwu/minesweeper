@@ -10,6 +10,7 @@ const GameSchema = new Schema(
     bombCount: Number,
     start: { type: Date, default: undefined },
     end: { type: Date, default: undefined },
+    turnIndex: Number,                // index of Players
     players: [Schema.Types.ObjectId], // [User._id]
     lobbys: [Schema.Types.ObjectId],  // [Lobby._id]
     data: {

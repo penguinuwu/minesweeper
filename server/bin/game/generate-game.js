@@ -1,5 +1,12 @@
 const generateGame = (settings) => {
   if (settings.shape === 'square') {
+    // settings must have:
+    //   difficulty: easy | intermediate | hard
+    // or
+    //   width: Number that is in [2, 50]
+    //   height: Number that is in [2, 50]
+    //   bombCount: Number that is <= width*height-3
+
     // import relevant square board functions
     const {
       getDifficulty,
@@ -39,8 +46,9 @@ const generateGame = (settings) => {
       players: [],
       lobbys: [],
       data: {
-        lives: diff.lives,
-        explosions: diff.explosions,
+        maxLives: 1,
+        lives: {},
+        explosions: {},
         bombLocations: bombLocations,
         solved: solved,
         unsolved: unsolved
