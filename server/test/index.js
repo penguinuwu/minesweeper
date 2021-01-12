@@ -51,7 +51,37 @@ const test = (req, res, next) => {
     </div>
   `;
 
+  let playSolo = `
+    <div>
+      <h1>play solo</h1>
+      <form action='${API_ROUTE}/play/solo' method='POST'>
+        <div>
+          <label for='shape'>shape</label>
+          <input type='text' id='shape' name='shape' value='square' required>
+        </div>
+        <div>
+          <label for='difficulty'>difficulty</label>
+          <input type='text' id='difficulty' name='difficulty' value='easy'>
+        </div>
+        <div>
+          <label for='height'>height</label>
+          <input type='text' id='height' name='height'>
+        </div>
+        <div>
+          <label for='width'>width</label>
+          <input type='text' id='width' name='width'>
+        </div>
+        <div>
+          <label for='bombCount'>bombCount</label>
+          <input type='text' id='bombCount' name='bombCount'>
+        </div>
+        <button type='submit'>gen</button>
+      </form>
+    </div>
+  `;
+
   return res.status(200).send(`
+    ${playSolo}
     ${home}
     ${register}
     ${login}

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 mongoose.connect(process.env.DB_STRING, {
+  useCreateIndex: true, // deprecation warning with Schema.index()
   useNewUrlParser: true,
   useUnifiedTopology: true
 });

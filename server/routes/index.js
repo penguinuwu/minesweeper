@@ -16,6 +16,14 @@ const wrapper = (io) => {
   router.post(`${API_ROUTE}/login`, login);
   router.post(`${API_ROUTE}/logout`, logout);
 
+  // solo play
+  const playSolo = require('../bin/play/solo');
+  router.post(`${API_ROUTE}/play/solo`, playSolo);
+
+  // multiplayer play
+  const playmulti = require('../bin/play/multi');
+  router.post(`${API_ROUTE}/play/multi`, playmulti);
+
   return router;
 };
 
