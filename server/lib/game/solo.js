@@ -13,14 +13,14 @@ const play = async (req, res, next) => {
   if (!game) return res.status(400).send('Invalid game settings.');
 
   // add user id or temp user
-  let userID = (req.user) ? req.user.id : 'temp';
+  let userID = (req.user) ? req.user.id : process.env.TEMP;
   let userIndex = Object.keys(game.players).length;
   game.players[userID] = userIndex;
 
   game.data.lives.push(game.data.maxLives);
   game.data.flags.push(0);
   game.data.explosions.push(0);
-  game.temp = (userID === 'temp');
+  game.temp = (userID === process.env.TEMP);
 
   // store game
   try {

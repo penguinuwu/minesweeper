@@ -6,15 +6,12 @@ const login = (req, res, next) => {
     return res.status(403).send('You are already logged in.');
 
   return passport.authenticate('local', (err, user, info) => {
-    if (err)
-      return next(err);
-    if (!user)
-      return res.status(401).send('Incorrect credentials.');
-  
+    if (err) return next(err);
+    if (!user) return res.status(401).send('Incorrect credentials.');
+
     req.logIn(user, (err) => {
-      if (err)
-        return next(err);
-      return res.status(200).send('Success.');
+      if (err) return next(err);
+      return res.status(200).send(process.env.SUCCESS);
     });
   })(req, res, next);
 };

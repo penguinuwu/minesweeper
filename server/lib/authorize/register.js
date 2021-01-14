@@ -27,7 +27,7 @@ const register = async (req, res, next) => {
   if (!createUser(name, pass))
     return res.status(401).send('Error: cannot register user.');
 
-  return res.status(200).send('Success.');
+  return res.status(200).send(process.env.SUCCESS);
 };
 
 module.exports = register;

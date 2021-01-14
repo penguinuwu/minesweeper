@@ -4,7 +4,7 @@ const logout = (req, res, next) => {
     return res.status(403).send('You are not logged in.');
 
   req.logOut();
-  return res.status(200).send('Success.');
+  return res.status(200).send(process.env.SUCCESS);
 };
 
 module.exports = logout;

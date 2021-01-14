@@ -33,7 +33,7 @@ const play = async (socket) => {
   const query = socket.handshake.query;
 
   // store userID and gameID
-  const userID = passport ? passport.user : 'temp';
+  const userID = passport ? passport.user : process.env.TEMP;
   const gameID = query.gameID;
 
   // get game from database
@@ -58,7 +58,7 @@ const play = async (socket) => {
 
   // game connection success
   socket.emit('update', getGame(userIndex, game));
-  socket.emit('status', 'Success.');
+  socket.emit('status', process.env.SUCCESS);
 
   socket.on('start', async () => {
     if (game.end) {
@@ -89,7 +89,7 @@ const play = async (socket) => {
       return socket.disconnect(true);
     }
 
-    socket.emit('status', 'Success.');
+    socket.emit('status', process.env.SUCCESS);
     socket.emit('update', getGame(userIndex, game));
   });
 
@@ -107,7 +107,7 @@ const play = async (socket) => {
       } else if (moves.action === 'flag') {
         success = flag(moves.row, moves.col, game);
       }
-      socket.emit('status', 'Success.');
+      socket.emit('status', process.env.SUCCESS);
 
       // if move did not succeed, do not update
       if (!success) return;
