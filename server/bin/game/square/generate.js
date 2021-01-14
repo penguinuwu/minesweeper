@@ -1,5 +1,5 @@
-const { CELLS_ENCODER } = require('../encode');
-const { isInBounds, isInteger } = require('../helpers');
+const { CELLS_ENCODER } = require('$/bin/game/encode');
+const { isInBounds, isInteger } = require('$/bin/game/helpers');
 
 // https://dash.harvard.edu/bitstream/handle/1/14398552/BECERRA-SENIORTHESIS-2015.pdf
 const DEFAULT_DIFFICULTIES = {

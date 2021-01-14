@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const User = require('../../models/user');
+const User = require('$/models/user');
 
 const authorize = (name, pass, done) => {
   const failMsg = { message: 'Incorrect credentials.' };

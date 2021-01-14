@@ -1,6 +1,6 @@
-const User = require('../../models/user');
-const Game = require('../../models/game');
-const { isInteger } = require('../../bin/game/helpers');
+const User = require('$/models/user');
+const Game = require('$/models/game');
+const { isInteger } = require('$/bin/game/helpers');
 const {
   nextTurn,
   reveal,
@@ -8,7 +8,7 @@ const {
   checkGameEnd,
   getGame,
   getResults
-} = require('../../bin/game/square/actions');
+} = require('$/bin/game/square/actions');
 
 const findGame = async (gameID) => {
   if (!gameID) return null;

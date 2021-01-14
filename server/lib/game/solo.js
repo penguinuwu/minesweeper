@@ -1,5 +1,5 @@
-const Game = require('../../models/game');
-const generateGame = require('../../bin/game/generate-game');
+const Game = require('$/models/game');
+const generateGame = require('$/bin/game/generate-game');
 
 const play = async (req, res, next) => {
   // generate game

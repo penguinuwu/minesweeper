@@ -1,6 +1,6 @@
 const Strategy = require('passport-local').Strategy;
-const authorize = require('../bin/authorize/authorize');
-const { serialize, deserialize } = require('../bin/authorize/serialization');
+const authorize = require('$/bin/authorize/authorize');
+const { serialize, deserialize } = require('$/bin/authorize/serialization');
 
 const initialize = (passport) => {
   const fields = {

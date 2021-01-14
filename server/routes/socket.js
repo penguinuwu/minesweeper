@@ -1,5 +1,5 @@
-const play = require('../lib/game/play');
-const spectate = require('../lib/game/spectate');
+const play = require('$/lib/game/play');
+const spectate = require('$/lib/game/spectate');
 
 const events = (io) => {
   io.on('connect', (socket) => {

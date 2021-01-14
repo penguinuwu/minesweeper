@@ -1,4 +1,4 @@
-const User = require('../../models/user');
+const User = require('$/models/user');
 
 const serialize = (user, done) => done(null, user.id);
 

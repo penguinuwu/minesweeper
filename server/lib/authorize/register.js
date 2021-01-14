@@ -1,5 +1,5 @@
-const createUser = require('../../bin/authorize/createUser');
-const uniqueUsername = require('../../bin/authorize/uniqueUsername');
+const createUser = require('$/bin/authorize/createUser');
+const uniqueUsername = require('$/bin/authorize/uniqueUsername');
 
 const register = async (req, res, next) => {
   // redirect to home if logged in

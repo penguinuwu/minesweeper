@@ -13,7 +13,7 @@ const generateGame = (settings) => {
       generateUnknownBoard,
       generateBombLocations,
       generateNewBoard
-    } = require('./square/generate');
+    } = require('$/bin/game/square/generate');
 
     // get difficulty settings
     let diff = getDifficulty(

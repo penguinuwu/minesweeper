@@ -7,6 +7,7 @@
     "test": "nodemon -r dotenv/config ./app.js dotenv_config_path=./.env"
   },
   "dependencies": {
+    "basetag": "^1.2.10",
     "bcrypt": "^5.0.0",
     "connect-mongo": "^3.2.0",
     "cors": "^2.8.5",

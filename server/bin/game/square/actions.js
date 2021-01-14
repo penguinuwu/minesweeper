@@ -1,4 +1,4 @@
-const { CELLS_ENCODER } = require('../encode');
+const { CELLS_ENCODER } = require('$/bin/game/encode');
 const {
   isInBounds,
   isInteger,
@@ -7,7 +7,7 @@ const {
   arrayUnion,
   arraySum,
   playersAlive
-} = require('../helpers');
+} = require('$/bin/game/helpers');
 
 const nextTurn = (game) => {
   const playerCount = Object.keys(game.players).length;
