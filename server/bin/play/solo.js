@@ -12,16 +12,15 @@ const playSolo = async (req, res, next) => {
   });
   if (!game) return res.status(400).send('Invalid game settings.');
 
-  // if user is logged in, then add user
-  if (req.user) {
-    game.data.lives[req.user.id] = game.maxLives;
-    game.data.explosions[req.user.id] = 0;
-    game.players.push(req.user.id);
-    game.temp = false;
-  } else {
-    game.data.lives['temp'] = game.maxLives;
-    game.data.explosions['temp'] = 0;
-  }
+  // add user id or temp user
+  let userID = (req.user) ? req.user.id : 'temp';
+  let userIndex = Object.keys(game.players).length;
+  game.players[userID] = userIndex;
+
+  game.data.lives.push(game.data.maxLives);
+  game.data.flags.push(0);
+  game.data.explosions.push(0);
+  game.temp = (userID === 'temp');
 
   // store game
   try {
@@ -35,6 +34,7 @@ const playSolo = async (req, res, next) => {
       lobbys: game.lobbys,
       data: {
         lives: game.data.lives,
+        flags: game.data.flags,
         explosions: game.data.explosions,
         bombLocations: game.data.bombLocations,
         solved: game.data.solved,
@@ -45,11 +45,11 @@ const playSolo = async (req, res, next) => {
 
     // store game for user if user is logged in
     if (req.user) {
-      req.user.games.push(newGame._id);
+      req.user.games.push(newGame.id);
       await req.user.save();
     }
 
-    return res.status(200).send(newGame._id);
+    return res.status(200).send(newGame.id);
   } catch (err) {
     console.log(err);
     return res.status(500).send('Error: could not create game.');

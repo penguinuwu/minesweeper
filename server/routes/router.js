@@ -2,7 +2,10 @@ const router = require('express').Router();
 const API_ROUTE = process.env.API_ROUTE;
 
 // test routes
-if (process.env.TEST) router.get('/', require('../test'));
+if (process.env.TEST) {
+  router.get('/favicon.ico', (req, res) => res.status(200));
+  router.get('/', require('../test'));
+}
 
 // authorize routes
 const register = require('../bin/authorize/register');

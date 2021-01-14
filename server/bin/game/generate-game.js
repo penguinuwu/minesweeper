@@ -43,12 +43,13 @@ const generateGame = (settings) => {
       height: diff.height,
       width: diff.width,
       bombCount: diff.bombCount,
-      players: [],
+      players: {},
       lobbys: [],
       data: {
-        maxLives: 1,
-        lives: {},
-        explosions: {},
+        maxLives: diff.maxLives,
+        lives: [],
+        flags: [],
+        explosions: [],
         bombLocations: bombLocations,
         solved: solved,
         unsolved: unsolved

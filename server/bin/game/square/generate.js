@@ -1,22 +1,25 @@
-const { CELLS_ENCODER } = require('./encode');
-const { isInBounds } = require('./move');
+const { CELLS_ENCODER } = require('../encode');
+const { isInBounds, isInteger } = require('../helpers');
 
 // https://dash.harvard.edu/bitstream/handle/1/14398552/BECERRA-SENIORTHESIS-2015.pdf
 const DEFAULT_DIFFICULTIES = {
   easy: {
     height: 10,
     width: 10,
-    bombCount: 10
+    bombCount: 10,
+    maxLives: 3
   },
   intermediate: {
     height: 16,
     width: 16,
-    bombCount: 40
+    bombCount: 40,
+    maxLives: 2
   },
   expert: {
     height: 30,
     width: 16,
-    bombCount: 99
+    bombCount: 99,
+    maxLives: 1
   }
 };
 
@@ -28,20 +31,28 @@ const getDifficulty = (difficulty, height, width, bombCount) => {
   // check if height, width, and bombCount all exist
   if (!height || !width || !bombCount) return null;
 
-  // check if board dimensions are valid
+  if (isInteger(height) && isInteger(width) && isInteger(bombCount)) {
+    height = parseInt(height);
+    width = parseInt(width);
+    bombCount = parseInt(bombCount);
+  } else {
+    return null;
+  }
+
+  // check if board dimensions are invalid
   if (
     !(2 <= height && height <= 50) ||
     !(2 <= width && width <= 50) ||
     !(height * width - 3 >= bombCount)
   )
-    return {
-      height: height,
-      width: width,
-      bombCount: bombCount
-    };
+    return null;
 
-  // invalid dimensions
-  return null;
+  return {
+    height: height,
+    width: width,
+    bombCount: bombCount,
+    maxLives: 1 // todo: customize life count
+  };
 };
 
 const shuffleArray = (array) => {
@@ -112,15 +123,15 @@ const generateNewBoard = (height, width, bombLocs) => {
     for (let c = 0; c < width; c++) {
       if (newBoard[r][c] !== CELLS_ENCODER['unknown']) continue;
       let bombCount = 0;
-      for (let dy = -1; dy <= 1; dy++) {
-        for (let dx = -1; dx <= 1; dx++) {
-          if (
-            (dx === 0 && dy === 0) ||
-            !isInBounds(r + dy, c + dx, height, width)
-          )
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          let r2 = r + dr;
+          let c2 = c + dc;
+
+          if ((dc === 0 && dr === 0) || !isInBounds(r2, c2, height, width))
             continue;
 
-          if (newBoard[r + dy][c + dx] === CELLS_ENCODER['bomb']) bombCount++;
+          if (newBoard[r2][c2] === CELLS_ENCODER['bomb']) bombCount++;
         }
       }
       newBoard[r][c] = bombCount;

@@ -1,8 +1,14 @@
+const playGame = require('../bin/play/playSocket');
 
 const events = (io) => {
-  // make a move
-  const makeMove = require('../bin/play/move');
-  io.on('move', makeMove);
-}
+  io.on('connect', (socket) => {
+    if (socket.handshake.query.action === 'play') {
+      playGame(socket);
+    } else {
+      socket.emit('status', 'Coming soon!');
+      socket.disconnect(true);
+    }
+  });
+};
 
 module.exports = events;

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const LobbySchema = new Schema({
-  games: [Schema.Types.ObjectId]    // User.id
+  games: [String] // ["User.id"]
 });
 
 const LobbyModel = mongoose.model('Lobby', LobbySchema);

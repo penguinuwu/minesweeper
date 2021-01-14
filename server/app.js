@@ -1,36 +1,42 @@
 const express = require('express');
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
-const http = require('http');
-const cors = require('cors');
-const passport = require('passport');
-const io = require('socket.io');
+const app = express();
 
 // set up sessions table in database
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 const database = require('./config/database');
 const SessionStore = new MongoStore({
   mongooseConnection: database,
   collection: 'sessions'
 });
 
-// configure passport
-require('./config/passport')(passport);
+// create sessions middleware
+const sessionMiddleware = session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  store: SessionStore,
+  cookie: {
+    secure: false, // set to true when https
+    maxAge: 1000 * 60 * 60 * 24 // 1 day in ms
+  }
+});
 
-// configure custom routes
-const router = require('./routes/router');
+// use session middleware in express
+app.use(sessionMiddleware);
 
-// start express app
-const app = express();
-
-// store http server to use custom socket connections
-const server = http.createServer(app);
-require('./routes/socket')(
-  io(server, {
-    path: process.env.API_ROUTE
-  })
-);
+// use session middleware in socket
+const server = require('http').createServer(app);
+const io = require('socket.io')(server, {
+  path: `${process.env.API_ROUTE}/socket`
+});
+io.use((socket, next) => {
+  sessionMiddleware(socket.request, {}, next);
+});
+require('./routes/socket')(io);
 
 // enable cross-origin resource sharing
+const cors = require('cors');
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
@@ -44,27 +50,16 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// set up connect-mongo session store
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    store: SessionStore,
-    cookie: {
-      secure: false, // set to true when https
-      maxAge: 1000 * 60 * 60 * 24 // 1 day in ms
-    }
-  })
-);
-
-// start passport
+// configure and start passport
+const passport = require('passport');
+require('./config/passport')(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
 // use custom routes
+const router = require('./routes/router');
 app.use(router);
 
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
   console.log(`Listening at http://localhost:${process.env.PORT}`);
 });

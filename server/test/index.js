@@ -80,7 +80,63 @@ const test = (req, res, next) => {
     </div>
   `;
 
+  let socketTest = `
+    <div>
+      <h1>start</h1>
+      <form id="startform">
+        <button>Send</button>
+      </form>
+    </div>
+    <div>
+      <h1>move</h1>
+      <form id="moveform">
+        <input id="act" />
+        <input id="movex" />
+        <input id="movey" />
+        <button>Send</button>
+      </form>
+    </div>
+    <div>
+      <input id="status" />
+    </div>
+
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+
+    <script>
+      let socket = io('http://localhost:${process.env.PORT}', {
+        path: '${process.env.API_ROUTE}/socket',
+        query: {'gameID': '${process.env.TEST}', 'action': 'play'}
+      });
+
+      let status = document.getElementById('status');
+      let startform = document.getElementById('startform');
+      startform.addEventListener('submit', function(e) {
+        e.preventDefault();
+        socket.emit('start');
+      });
+      
+      let movex = document.getElementById('movex');
+      let movey = document.getElementById('movey');
+      let act = document.getElementById('act');
+      let moveform = document.getElementById('moveform');
+      moveform.addEventListener('submit', function(e) {
+        e.preventDefault();
+        socket.emit('move', {'action': act.value, 'row': movex.value, 'col': movey.value});
+      });
+
+      const showBoard = (array) => {
+        for (let r = 0; r < array.length; r++) {
+          console.log(array[r].join());
+        }
+      }
+
+      socket.on('status', (s) => {status.value = s});
+      socket.on('update', (d) => {console.log('update'); console.log(d); showBoard(d.board)});
+      socket.on('results', (r) => {console.log('results'); console.log(r)});
+    </script>
+  `;
   return res.status(200).send(`
+    ${socketTest}
     ${playSolo}
     ${home}
     ${register}

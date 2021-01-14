@@ -4,21 +4,22 @@ const { Schema } = mongoose;
 const GameSchema = new Schema(
   {
     temp: { type: Boolean, default: true, index: true },
-    shape: String,                    // shape of board (square, hexagon, etc)
+    shape: String,                // shape of board (square, hexagon, etc)
     height: Number,
     width: Number,
     bombCount: Number,
     start: { type: Date, default: undefined },
     end: { type: Date, default: undefined },
-    turnIndex: Number,                // index of Players
-    players: [Schema.Types.ObjectId], // [User._id]
-    lobbys: [Schema.Types.ObjectId],  // [Lobby._id]
+    turnIndex: Number,            // whos turn is it
+    players: Schema.Types.Mixed,  // index of each player { "User.id": Number }
+    lobbys: [String],             // ["Lobby.id"]
     data: {
-      lives: Schema.Types.Mixed,      // max lives per user { User._id: Number }
-      explosions: Schema.Types.Mixed, // explosions per user { User._id: Number }
+      lives: [Number],            // max lives per player index
+      flags: [Number],            // flags by player index
+      explosions: [Number],       // explosions caused by player index
       bombLocations: [[Number]],
-      solved: [[String]],             // solution board
-      unsolved: [[String]]            // unsolved board
+      solved: [[String]],         // solution board
+      unsolved: [[String]]        // unsolved board
     }
   },
   { timestamps: true }
@@ -28,7 +29,7 @@ const GameSchema = new Schema(
 GameSchema.index(
   { createdAt: 1 },
   {
-    expireAfterSeconds: 1000 * 60 * 60 * 24,
+    expireAfterSeconds: 60 * 60 * 24,
     partialFilterExpression: { temp: true }
   }
 );
