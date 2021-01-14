@@ -1,7 +1,7 @@
 const Game = require('../../models/game');
 const generateGame = require('../../bin/game/generate-game');
 
-const playSolo = async (req, res, next) => {
+const play = async (req, res, next) => {
   // generate game
   let game = generateGame({
     shape: req.body.shape,
@@ -49,11 +49,11 @@ const playSolo = async (req, res, next) => {
       await req.user.save();
     }
 
-    return res.status(200).send(newGame.id);
+    return res.status(200).send(newGame._id);
   } catch (err) {
     console.log(err);
     return res.status(500).send('Error: could not create game.');
   }
 };
 
-module.exports = playSolo;
+module.exports = play;

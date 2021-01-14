@@ -16,11 +16,11 @@ router.post(`${API_ROUTE}/login`, login);
 router.post(`${API_ROUTE}/logout`, logout);
 
 // solo play
-const playSolo = require('../lib/play/solo');
+const playSolo = require('../lib/game/solo');
 router.post(`${API_ROUTE}/play/solo`, playSolo);
 
 // multiplayer play
-const playMulti = require('../lib/play/multi');
+const playMulti = require('../lib/game/multi');
 router.post(`${API_ROUTE}/play/multi`, playMulti);
 
 module.exports = router;
