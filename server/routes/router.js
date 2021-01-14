@@ -8,19 +8,19 @@ if (process.env.TEST) {
 }
 
 // authorize routes
-const register = require('../bin/authorize/register');
-const login = require('../bin/authorize/login');
-const logout = require('../bin/authorize/logout');
+const register = require('../lib/authorize/register');
+const login = require('../lib/authorize/login');
+const logout = require('../lib/authorize/logout');
 router.post(`${API_ROUTE}/register`, register);
 router.post(`${API_ROUTE}/login`, login);
 router.post(`${API_ROUTE}/logout`, logout);
 
 // solo play
-const playSolo = require('../bin/play/solo');
+const playSolo = require('../lib/play/solo');
 router.post(`${API_ROUTE}/play/solo`, playSolo);
 
 // multiplayer play
-const playMulti = require('../bin/play/multi');
+const playMulti = require('../lib/play/multi');
 router.post(`${API_ROUTE}/play/multi`, playMulti);
 
 module.exports = router;
