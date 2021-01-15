@@ -17,7 +17,7 @@ function Register() {
       // send post request
       let res = await axios({
         method: 'post',
-        url: `${process.env.REACT_APP_API_URL}/api/register`,
+        url: `${process.env.REACT_APP_API_URL}/register`,
         data: {
           username: username,
           password: password
@@ -26,7 +26,7 @@ function Register() {
       });
 
       // success
-      setStatus(res.data);
+      setStatus('success');
     } catch (err) {
       if (err.response && err.response.data) {
         // registration fail
@@ -50,9 +50,10 @@ function Register() {
   // if user is not logged in
   // then return registration from
   if (!user && !localStorage.getItem('username')) {
-    if (status === 'Success.') return <Redirect to='/login' />;
+    if (status === 'success')
+      return <Redirect to='/login' />;
     return (
-      <div className='d-flex my-2 align-items-center justify-content-center vertical-center gradient'>
+      <div className='d-flex my-2 align-items-center justify-content-center'>
         <div className='card p-4 text-light bg-dark rw-30'>
           <div className='class-header'>
             <p className='fs-2'>Register</p>

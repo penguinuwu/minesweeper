@@ -17,7 +17,7 @@ function Login() {
       // send post request
       let res = await axios({
         method: 'post',
-        url: `${process.env.REACT_APP_API_URL}/api/login`,
+        url: `${process.env.REACT_APP_API_URL}/login`,
         data: {
           username: username,
           password: password
@@ -25,12 +25,10 @@ function Login() {
         withCredentials: true
       });
 
-      setStatus(res.data);
       // authorization success
-      if (res.data === 'Success.') {
-        localStorage.setItem('username', username);
-        setUser(username);
-      }
+      setStatus(false);
+      setUser(res.data);
+      localStorage.setItem('username', res.data);
     } catch (err) {
       if (err.response && err.response.data) {
         // authorization fail
@@ -55,7 +53,7 @@ function Login() {
   // then return login from
   if (!user && !localStorage.getItem('username')) {
     return (
-      <div className='d-flex my-2 align-items-center justify-content-center vertical-center gradient'>
+      <div className='d-flex my-2 align-items-center justify-content-center'>
         <div className='card p-4 text-light bg-dark rw-30'>
           <div className='class-header'>
             <p className='fs-2'>Login</p>

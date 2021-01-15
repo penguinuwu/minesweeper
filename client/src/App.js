@@ -9,7 +9,7 @@ import Logout from './Pages/Logout';
 import Play from './Pages/Play';
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(false);
   const value = useMemo(() => ({ user, setUser }), [user]);
 
   return (

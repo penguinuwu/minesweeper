@@ -14,7 +14,7 @@ function Logout() {
   function renderLogoutFail(response) {
     if (!response) response = 'Error: cannot logout user.';
     return (
-      <div className='d-flex my-2 align-items-center justify-content-center vertical-center gradient'>
+      <div className='d-flex my-2 align-items-center justify-content-center'>
         <div className='card p-4 text-light bg-dark rw-30'>
           <div className='class-body text-center fs-2 px-3'>
             {response}
@@ -36,15 +36,13 @@ function Logout() {
       // send post request
       let res = await axios({
         method: 'post',
-        url: `${process.env.REACT_APP_API_URL}/api/logout`,
+        url: `${process.env.REACT_APP_API_URL}/logout`,
         withCredentials: true
       });
 
       // success
-      if (res.data === 'Success.') {
-        localStorage.removeItem('username');
-        setUser(false);
-      }
+      setUser(false);
+      localStorage.removeItem('username');
       return setResult(renderLogoutSuccess());
 
     } catch (err) {
