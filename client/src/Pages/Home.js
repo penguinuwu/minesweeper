@@ -13,7 +13,7 @@ function Home() {
     let username = getUsername();
     if (username) {
       return (
-        <div className='card text-center text-light bg-dark'>
+        <div className='card text-center text-light bg-dark mb-3'>
           <div className='card-body'>
             <p className='card-text display-3'>Welcome {username}!</p>
           </div>
@@ -26,7 +26,7 @@ function Home() {
   function renderPlay() {
     const text = 'Play Minesweeper';
     return (
-      <div className='card text-center text-dark gradient'>
+      <a className='card text-center text-dark gradient mb-3' href='/play'>
         <div className='card-body py-5'>
           <div className='card-text py-5'>
             {/* hide on sm and bigger screens */}
@@ -45,7 +45,7 @@ function Home() {
             <p className='d-none d-xl-block display-1'>{text}</p>
           </div>
         </div>
-      </div>
+      </a>
     );
   }
 
@@ -68,28 +68,19 @@ function Home() {
       );
     }
     return (
-      <div className='card text-center text-light bg-dark'>
+      <div className='card text-center text-light bg-dark mb-3'>
         <div className='card-body'>{btns}</div>
       </div>
     );
   }
 
-  function renderDivRow(content) {
-    if (!content) return null;
-    return (
-      <div className='row mx-auto mb-3'>
-        {content}
-      </div>
-    );
-  }
-
   return (
-    <div className='col'>
-      {renderDivRow(renderWelcome())}
-      <a className='row mx-auto' href='/play'>
+    <div className='row'>
+      <div className='col'>
+        {renderWelcome()}
         {renderPlay()}
-      </a>
-      {renderDivRow(renderFunctions())}
+        {renderFunctions()}
+      </div>
     </div>
   );
 }
