@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
 import UserContext from './Contexts/UserContext';
-import './App.css';
 import Navbar from './Components/Navbar';
 import Home from './Pages/Home';
 import Register from './Pages/Register';
