@@ -77,16 +77,16 @@ function Home() {
   function renderDivRow(content) {
     if (!content) return null;
     return (
-      <div className='row mb-2'>
+      <div className='row mx-auto mb-3'>
         {content}
       </div>
     );
   }
 
   return (
-    <div className='col mx-2 my-2'>
+    <div className='col'>
       {renderDivRow(renderWelcome())}
-      <a className='row mb-2' href='/play'>
+      <a className='row mx-auto' href='/play'>
         {renderPlay()}
       </a>
       {renderDivRow(renderFunctions())}

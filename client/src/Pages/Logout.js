@@ -14,7 +14,7 @@ function Logout() {
   function renderLogoutFail(response) {
     if (!response) response = 'Error: cannot logout user.';
     return (
-      <div className='d-flex my-2 align-items-center justify-content-center'>
+      <div className='d-flex align-items-center justify-content-center'>
         <div className='card p-4 text-light bg-dark rw-30'>
           <div className='class-body text-center fs-2 px-3'>
             {response}

@@ -53,7 +53,7 @@ function Register() {
     if (status === 'success')
       return <Redirect to='/login' />;
     return (
-      <div className='d-flex my-2 align-items-center justify-content-center'>
+      <div className='d-flex align-items-center justify-content-center'>
         <div className='card p-4 text-light bg-dark rw-30'>
           <div className='class-header'>
             <p className='fs-2'>Register</p>
