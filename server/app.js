@@ -1,28 +1,17 @@
 const express = require('express');
-const session = require('express-session');
-const cors = require('cors');
-const passport = require('passport');
-const MongoStore = require('connect-mongo')(session);
-const database = require('./config/database');
-const SessionStore = new MongoStore({
-  mongooseConnection: database,
-  collection: 'session'
-});
-
 const app = express();
 
-// enable cross 
-app.use(cors({
-  origin: process.env.CLIENT_URL,
-  credentials: true
-}))
+// set up sessions table in database
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+const database = require('$/config/database');
+const SessionStore = new MongoStore({
+  mongooseConnection: database,
+  collection: 'sessions'
+});
 
-// use express built-in body-parser
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }))
-
-// set up connect-mongo session store
-app.use(session({
+// create sessions middleware
+const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
@@ -31,17 +20,46 @@ app.use(session({
     secure: false, // set to true when https
     maxAge: 1000 * 60 * 60 * 24 // 1 day in ms
   }
-}));
+});
 
-// configure passport
-require('./config/passport');
+// use session middleware in express
+app.use(sessionMiddleware);
+
+// use session middleware in socket
+const server = require('http').createServer(app);
+const io = require('socket.io')(server, {
+  path: `${process.env.API_ROUTE}/socket`
+});
+io.use((socket, next) => {
+  sessionMiddleware(socket.request, {}, next);
+});
+require('$/routes/socket')(io);
+
+// enable cross-origin resource sharing
+const cors = require('cors');
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    methods: 'GET,POST',
+    optionsSuccessStatus: 200,
+    credentials: true
+  })
+);
+
+// use express built-in body-parser
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// configure and start passport
+const passport = require('passport');
+require('$/config/passport')(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
-const routes = require('./routes');
-app.use(routes);
+// use custom routes
+const router = require('$/routes/router');
+app.use(router);
 
-const port = process.env.PORT;
-app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}`);
+server.listen(process.env.PORT, () => {
+  console.log(`Listening at http://localhost:${process.env.PORT}`);
 });

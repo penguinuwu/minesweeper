@@ -1,45 +1,11 @@
-const bcrypt = require('bcrypt');
-const User = require('../models/user');
-
-const uniqueUsername = async (name) => {
-  try {
-    let user = await User.findOne({ username: name });
-    if (user) return false;
-    return true;
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
-};
-
-const createUser = async (name, pass) => {
-  try {
-    // generate salt and hash
-    let salt = bcrypt.genSaltSync(10);
-    let hash = bcrypt.hashSync(pass, salt);
-
-    // create user
-    let newUser = new User({
-      username: name,
-      email: '',
-      hash: hash,
-      games: []
-    });
-
-    // store user
-    await newUser.save();
-    return true;
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
-};
+const createUser = require('$/bin/authorize/createUser');
+const uniqueUsername = require('$/bin/authorize/uniqueUsername');
 
 const register = async (req, res, next) => {
   // redirect to home if logged in
   if (req.isAuthenticated())
     return res.status(401).send('You are already logged in.');
-  
+
   const name = req.body.username;
   const pass = req.body.password;
 
@@ -56,13 +22,12 @@ const register = async (req, res, next) => {
     return res.status(401).send('Password must be 6 to 30 characters long.');
 
   let isUnique = await uniqueUsername(name);
-  if (!isUnique)
-    return res.status(401).send('This username has been taken.');
+  if (!isUnique) return res.status(401).send('This username has been taken.');
 
   if (!createUser(name, pass))
     return res.status(401).send('Error: cannot register user.');
 
-  return res.status(200).send('Success.');
+  return res.status(200).send(process.env.SUCCESS);
 };
 
 module.exports = register;
