@@ -16,12 +16,10 @@ function Logout() {
     return (
       <div className='d-flex align-items-center justify-content-center'>
         <div className='card p-4 text-light bg-dark rw-30'>
-          <div className='card-body text-center fs-2 px-3'>
-            {response}
-          </div>
+          <div className='card-body text-center fs-2 px-3'>{response}</div>
           <div className='card-footer text-center'>
             <a className='btn btn-info me-1' href='/home'>
-              Home <i class="fas fa-home fa-fw"></i>
+              Home <i className='fas fa-home fa-fw'></i>
             </a>
             <a className='btn btn-info ms-1' href='/login'>
               Login <i className='fas fa-sign-in-alt fa-fw'></i>
@@ -33,6 +31,8 @@ function Logout() {
   }
 
   async function requestLogout() {
+    setUser(false);
+    localStorage.removeItem('username');
     try {
       // do not request logout if the user is already logged out
       if (!user && !localStorage.getItem('username'))
@@ -46,13 +46,14 @@ function Logout() {
       });
 
       // success
-      setUser(false);
-      localStorage.removeItem('username');
       return setResult(renderLogoutMsg('Logout successful!'));
-
     } catch (err) {
       // logout fail
-      return setResult(renderLogoutMsg(err.response.data));
+      if (err.response && err.response.data) {
+        return setResult(renderLogoutMsg(err.response.data));
+      } else {
+        return setResult(renderLogoutMsg('Error: cannot logout.'));
+      }
     }
   }
 

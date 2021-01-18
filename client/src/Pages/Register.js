@@ -46,9 +46,7 @@ function Register() {
     return (
       <div className='d-flex align-items-center justify-content-center'>
         <div className='card p-4 text-light bg-dark rw-30'>
-          <div className='card-header'>
-            <span className='fs-2'>Register</span>
-          </div>
+          <h2 className='card-header'>Register</h2>
           <div className='card-body text-center px-3 my-1'>
             {/* username */}
             <div className='input-group mb-1'>

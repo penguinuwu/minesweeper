@@ -105,9 +105,7 @@ function SelectSolo(props) {
 
     content = (
       <React.Fragment>
-        <div className='card-header bg-transparent border-info'>
-          <span className='fs-2'>Play Solo</span>
-        </div>
+        <h2 className='card-header bg-transparent border-info'>Play Solo</h2>
         <div className='card-body bg-transparent border-info text-center px-3 my-1'>
           {/* shape */}
           <div className='input-group mb-1'>
