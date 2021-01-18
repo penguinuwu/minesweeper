@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 import UserContext from '../Contexts/UserContext';
+import StatusAlert from '../Components/StatusAlert';
 
 function Register() {
   const [username, setUsername] = useState(null);
@@ -38,27 +39,17 @@ function Register() {
     }
   }
 
-  function renderStatus() {
-    if (!status) return null;
-    return (
-      <div className='alert alert-info mb-1' role='alert'>
-        {status}
-      </div>
-    );
-  }
-
   // if user is not logged in
   // then return registration from
   if (!user && !localStorage.getItem('username')) {
-    if (status === 'success')
-      return <Redirect to='/login' />;
+    if (status === 'success') return <Redirect to='/login' />;
     return (
       <div className='d-flex align-items-center justify-content-center'>
         <div className='card p-4 text-light bg-dark rw-30'>
-          <div className='class-header'>
-            <p className='fs-2'>Register</p>
+          <div className='card-header'>
+            <span className='fs-2'>Register</span>
           </div>
-          <div className='class-body text-center px-3 my-1'>
+          <div className='card-body text-center px-3 my-1'>
             {/* username */}
             <div className='input-group mb-1'>
               <span className='input-group-text btn-info'>
@@ -94,15 +85,15 @@ function Register() {
           </div>
           <div className='card-footer text-center'>
             {/* possible alerts */}
-            {renderStatus()}
+            <StatusAlert status={status} />
 
             {/* login reminder */}
-            <p className='m-0'>
+            <span className='m-0'>
               Have an account?{' '}
               <a className='text-info' href='/login'>
                 Login here!
               </a>
-            </p>
+            </span>
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 import UserContext from '../Contexts/UserContext';
+import StatusAlert from '../Components/StatusAlert';
 
 function Login() {
   const [username, setUsername] = useState(null);
@@ -40,25 +41,16 @@ function Login() {
     }
   }
 
-  function renderStatus() {
-    if (!status) return null;
-    return (
-      <div className='alert alert-info mb-1' role='alert'>
-        {status}
-      </div>
-    );
-  }
-
   // if user is not logged in
   // then return login from
   if (!user && !localStorage.getItem('username')) {
     return (
       <div className='d-flex align-items-center justify-content-center'>
         <div className='card p-4 text-light bg-dark rw-30'>
-          <div className='class-header'>
-            <p className='fs-2'>Login</p>
+          <div className='card-header'>
+            <span className='fs-2'>Login</span>
           </div>
-          <div className='class-body text-center px-3 my-1'>
+          <div className='card-body text-center px-3 my-1'>
             {/* username */}
             <div className='input-group mb-1'>
               <span className='input-group-text btn-info'>
@@ -94,24 +86,24 @@ function Login() {
           </div>
           <div className='card-footer text-center'>
             {/* possible alerts */}
-            {renderStatus()}
+            <StatusAlert status={status} />
 
             {/* register reminder */}
-            <p className='m-0'>
+            <span className='m-0'>
               Don't have an account?{' '}
               <a className='text-info' href='/register'>
                 Register here!
               </a>
-            </p>
+            </span>
 
             {/*
             TODO: forget password button
-            <p className='m-0'>
+            <span className='m-0'>
               Forgot your login details?{' '}
               <a className='text-info' href='/register'>
                 Click here!
               </a>
-            </p>
+            </span>
             */}
           </div>
         </div>

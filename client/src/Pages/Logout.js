@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Redirect } from 'react-router-dom';
+// import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 import UserContext from '../Contexts/UserContext';
 
@@ -7,18 +7,23 @@ function Logout() {
   const [result, setResult] = useState(null);
   const { user, setUser } = useContext(UserContext);
 
-  function renderLogoutSuccess() {
-    return <Redirect to='/' />;
-  }
+  // function renderRedirect() {
+  //   return <Redirect to='/' />;
+  // }
 
-  function renderLogoutFail(response) {
+  function renderLogoutMsg(response) {
     if (!response) response = 'Error: cannot logout user.';
     return (
       <div className='d-flex align-items-center justify-content-center'>
         <div className='card p-4 text-light bg-dark rw-30'>
-          <div className='class-body text-center fs-2 px-3'>
+          <div className='card-body text-center fs-2 px-3'>
             {response}
-            <a className='btn btn-info' href='/login'>
+          </div>
+          <div className='card-footer text-center'>
+            <a className='btn btn-info me-1' href='/home'>
+              Home <i class="fas fa-home fa-fw"></i>
+            </a>
+            <a className='btn btn-info ms-1' href='/login'>
               Login <i className='fas fa-sign-in-alt fa-fw'></i>
             </a>
           </div>
@@ -31,7 +36,7 @@ function Logout() {
     try {
       // do not request logout if the user is already logged out
       if (!user && !localStorage.getItem('username'))
-        return setResult(renderLogoutFail('You are not logged in!'));
+        return setResult(renderLogoutMsg('You are not logged in!'));
 
       // send post request
       await axios({
@@ -43,11 +48,11 @@ function Logout() {
       // success
       setUser(false);
       localStorage.removeItem('username');
-      return setResult(renderLogoutSuccess());
+      return setResult(renderLogoutMsg('Logout successful!'));
 
     } catch (err) {
       // logout fail
-      return setResult(renderLogoutFail(err.response.data));
+      return setResult(renderLogoutMsg(err.response.data));
     }
   }
 
