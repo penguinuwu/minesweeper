@@ -20,6 +20,11 @@ a:hover {
   text-decoration: none;
 }
 
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
 .gradient {
   background: rgb(174, 238, 193);
   background: radial-gradient(
@@ -41,7 +46,6 @@ a:hover {
   width: 30rem !important;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.darken {
+  filter: brightness(50%);
 }
