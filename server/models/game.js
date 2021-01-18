@@ -12,7 +12,6 @@ const GameSchema = new Schema(
     end: { type: Date, default: undefined },
     turnIndex: Number,            // whos turn is it
     players: Schema.Types.Mixed,  // index of each player { "User.id": Number }
-    lobbys: [String],             // ["Lobby.id"]
     data: {
       lives: [Number],            // max lives per player index
       flags: [Number],            // flags by player index

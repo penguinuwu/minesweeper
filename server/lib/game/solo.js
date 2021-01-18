@@ -1,4 +1,5 @@
 const Game = require('$/models/game');
+const Lobby = require('$/models/lobby');
 const generateGame = require('$/bin/game/generate-game');
 
 const play = async (req, res, next) => {
@@ -13,14 +14,14 @@ const play = async (req, res, next) => {
   if (!game) return res.status(400).send('Invalid game settings.');
 
   // add user id or temp user
-  let userID = (req.user) ? req.user.id : process.env.TEMP;
+  let userID = req.user ? req.user.id : process.env.TEMP;
   let userIndex = Object.keys(game.players).length;
   game.players[userID] = userIndex;
 
   game.data.lives.push(game.data.maxLives);
   game.data.flags.push(0);
   game.data.explosions.push(0);
-  game.temp = (userID === process.env.TEMP);
+  game.temp = userID === process.env.TEMP;
 
   // store game
   try {
@@ -31,7 +32,6 @@ const play = async (req, res, next) => {
       width: game.width,
       bombCount: game.bombCount,
       players: game.players,
-      lobbys: game.lobbys,
       data: {
         lives: game.data.lives,
         flags: game.data.flags,
@@ -43,13 +43,23 @@ const play = async (req, res, next) => {
     });
     await newGame.save();
 
+    let newLobby = new Lobby({
+      temp: game.temp,
+      lobbyType: 'solo',
+      players: { userID: newGame.id },
+      spectators: []
+    });
+    await newLobby.save();
+
     // store game for user if user is logged in
     if (req.user) {
-      req.user.games.push(newGame.id);
+      req.user.lobbys.push(newGame.id);
       await req.user.save();
     }
 
-    return res.status(200).send(newGame._id);
+    return res
+      .status(200)
+      .send({ lobbyType: newLobby.lobbyType, lobbyID: newLobby._id });
   } catch (err) {
     console.log(err);
     return res.status(500).send('Error: could not create game.');

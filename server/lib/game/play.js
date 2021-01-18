@@ -1,4 +1,5 @@
 const User = require('$/models/user');
+const Lobby = require('$/models/lobby');
 const Game = require('$/models/game');
 const { isInteger } = require('$/bin/game/helpers');
 const {
@@ -9,6 +10,15 @@ const {
   getGame,
   getResults
 } = require('$/bin/game/square/actions');
+
+const findLobby = async (lobbyID) => {
+  if (!lobbyID) return null;
+  try {
+    return await Lobby.findById(lobbyID).exec();
+  } catch (err) {
+    return null;
+  }
+};
 
 const findGame = async (gameID) => {
   if (!gameID) return null;
@@ -32,9 +42,17 @@ const play = async (socket) => {
   const passport = socket.request.session.passport;
   const query = socket.handshake.query;
 
-  // store userID and gameID
+  // store userID and lobbyID
   const userID = passport ? passport.user : process.env.TEMP;
-  const gameID = query.gameID;
+  const lobbyID = query.lobbyID;
+
+  // get lobby from database
+  const lobby = await findLobby(lobbyID)
+  if (!lobby) {
+    socket.emit('status', 'Lobby cannot be found.');
+    return socket.disconnect(true);
+  }
+  const gameID = lobby.games[userID];
 
   // get game from database
   const game = await findGame(gameID);
@@ -133,8 +151,8 @@ const play = async (socket) => {
 
         // archive game
         let user = await findUser(userID);
-        user.pastGames.push(gameID);
-        user.games.splice(user.games.indexOf(gameID), 1);
+        user.pastLobbys.push(gameID);
+        user.lobbys.splice(user.lobbys.indexOf(gameID), 1);
         try {
           await user.save();
         } catch (err) {

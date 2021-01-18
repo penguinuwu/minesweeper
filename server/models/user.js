@@ -5,10 +5,10 @@ const UserSchema = new Schema({
   username: String,
   email: String,
   hash: String,
-  // user's games ["Game.id"]
-  games: { type: [String], default: [] },
-  // user's past ["Game.id"]
-  pastGames: { type: [String], default: [] }
+  // user's lobbys ["Lobby.id"]
+  lobbys: { type: [String], default: [] },
+  // user's past ["Lobby.id"]
+  pastLobbys: { type: [String], default: [] }
 });
 
 const UserModel = mongoose.model('User', UserSchema);

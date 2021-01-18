@@ -38,13 +38,11 @@ const generateGame = (settings) => {
     if (!unsolved || !solved) return null;
 
     let game = {
-      temp: true,
       shape: 'square',
       height: diff.height,
       width: diff.width,
       bombCount: diff.bombCount,
       players: {},
-      lobbys: [],
       data: {
         maxLives: diff.maxLives,
         lives: [],

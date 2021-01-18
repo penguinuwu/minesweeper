@@ -15,6 +15,9 @@ router.post(`${API_ROUTE}/register`, register);
 router.post(`${API_ROUTE}/login`, login);
 router.post(`${API_ROUTE}/logout`, logout);
 
+// get lobbies
+// todo: get lobbies
+
 // solo play
 const playSolo = require('$/lib/game/solo');
 router.post(`${API_ROUTE}/play/solo`, playSolo);
