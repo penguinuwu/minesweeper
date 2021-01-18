@@ -21,25 +21,25 @@ function ModeSelect(props) {
 
   async function generateGame(type) {
     try {
-      // send post request
-      let res = await axios({
-        method: 'post',
-        url: `${process.env.REACT_APP_API_URL}/play/${type}`,
-        data: {
-          shape: shape,
-          difficulty: diff,
-          height: height,
-          width: width,
-          bombCount: bombCount
-        },
-        withCredentials: true
-      });
+      // // send post request
+      // let res = await axios({
+      //   method: 'post',
+      //   url: `${process.env.REACT_APP_API_URL}/play/${type}`,
+      //   data: {
+      //     shape: shape,
+      //     difficulty: diff,
+      //     height: height,
+      //     width: width,
+      //     bombCount: bombCount
+      //   },
+      //   withCredentials: true
+      // });
 
-      // create game success
-      props.setLobbyID(res.data.lobbyID);
-      props.setStatus(res.data.gameType);
-      // props.setLobbyID('100000');
-      // props.setStatus('solo');
+      // // create game success
+      // props.setLobbyID(res.data.lobbyID);
+      // props.setStatus(res.data.gameType);
+      props.setLobbyID('100000');
+      props.setStatus('solo');
     } catch (err) {
       if (err.response && err.response.data) {
         // authorization fail

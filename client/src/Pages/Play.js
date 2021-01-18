@@ -1,16 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ModeSelect from '../Containers/ModeSelect';
-import Lobby from '../Containers/Lobby';
+import Lobby from '../Containers/LobbySelect';
+import Game from '../Containers/Game';
 
 function Play() {
   const [status, setStatus] = useState(false);
   const [lobbyID, setLobbyID] = useState(false);
 
-  if (status) {
+  // if user selected lobby, then show game in lobby
+  if (lobbyID) {
+    return (
+      <Game
+        status={status}
+        resetStatus={() => setStatus(false)}
+        lobbyID={lobbyID}
+        resetLobbyID={() => setLobbyID(false)}
+      />
+    );
+  }
+
+  // show user multi lobbies
+  if (status === 'multi') {
     return (
       <Lobby
-        status={status}
-        setStatus={(s) => setStatus(s)}
+        resetStatus={() => setStatus(false)}
         lobbyID={lobbyID}
         setLobbyID={(id) => setLobbyID(id)}
       />
