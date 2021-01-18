@@ -15,7 +15,7 @@ function Register() {
       if (user || localStorage.getItem('username')) return;
 
       // send post request
-      let res = await axios({
+      await axios({
         method: 'post',
         url: `${process.env.REACT_APP_API_URL}/register`,
         data: {
