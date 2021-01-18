@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ModeSelect from '../Containers/ModeSelect';
 import Lobby from '../Containers/LobbySelect';
 import Game from '../Containers/Game';
@@ -20,7 +20,7 @@ function Play() {
   }
 
   // show user multi lobbies
-  if (status === 'multi') {
+  if (status) {
     return (
       <Lobby
         resetStatus={() => setStatus(false)}
