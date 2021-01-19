@@ -47,7 +47,7 @@ const play = async (socket) => {
   const lobbyID = query.lobbyID;
 
   // get lobby from database
-  const lobby = await findLobby(lobbyID)
+  const lobby = await findLobby(lobbyID);
   if (!lobby) {
     socket.emit('status', 'Lobby cannot be found.');
     return socket.disconnect(true);

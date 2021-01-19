@@ -2,34 +2,36 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
 function getLocalStorage(key, initialValue) {
-  // try {
+  try {
     const value = localStorage.getItem(key);
     return value ? JSON.parse(value) : initialValue;
-  // } catch (e) {
-  //   // if error, return initial value
-  //   return initialValue;
-  // }
+  } catch (e) {
+    // if error, return initial value
+    return initialValue;
+  }
 }
 
 function setLocalStorage(key, value) {
-  // try {
+  try {
     if (value) {
       localStorage.setItem(key, JSON.stringify(value));
     } else {
       localStorage.removeItem(key);
     }
-  // } catch (e) {
-  //   // catch possible errors:
-  //   // https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
-  // }
+  } catch (e) {
+    // todo:
+    // https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+  }
 }
 
 const UserContext = React.createContext(false);
 
 function UserProvider(props) {
   const [user, setUser] = useState(() => getLocalStorage('username', false));
+  // useMemo to look cool
   const value = useMemo(() => ({ user, setUser }), [user]);
 
+  // update localStorage on user change
   useEffect(() => {
     setLocalStorage('username', user);
   }, [user]);

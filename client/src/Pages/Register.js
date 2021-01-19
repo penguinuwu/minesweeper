@@ -27,7 +27,7 @@ function Register() {
       });
 
       // success
-      setStatus('success');
+      setStatus('Registration successful!');
     } catch (err) {
       if (err.response && err.response.data) {
         // registration fail
@@ -42,7 +42,6 @@ function Register() {
   // if user is not logged in
   // then return registration from
   if (!user) {
-    if (status === 'success') return <Redirect to='/login' />;
     return (
       <div className='d-flex align-items-center justify-content-center'>
         <div className='card p-4 text-light bg-dark rw-30'>

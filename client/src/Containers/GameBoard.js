@@ -35,15 +35,33 @@ function GameBoard(props) {
   }
 
   function renderBody() {
-    if (props.data.start) {
+    let cells = renderCells();
+    if (props.data.end) {
+      return (
+        <React.Fragment>
+          <p>{props.data.lives > 0 ? 'You won!' : 'You lost!'}</p>
+          <p>
+            <button className='btn btn-info btn-lg' onClick={props.reset}>
+              Exit game
+            </button>
+          </p>
+          {cells}
+        </React.Fragment>
+      );
+    } else if (props.data.start) {
       // game has started
-      return renderCells();
+      return cells;
     } else {
       // render start game button
       return (
-        <button className='btn btn-info' onClick={props.startGame}>
-          Start Game!
-        </button>
+        <React.Fragment>
+          <p>
+            <button className='btn btn-info btn-lg' onClick={props.startGame}>
+              Start Game!
+            </button>
+          </p>
+          {cells}
+        </React.Fragment>
       );
     }
   }
@@ -52,7 +70,6 @@ function GameBoard(props) {
     <div className='card text-light bg-dark'>
       <h2 className='card-header'>Play</h2>
       <div className='card-body text-center'>{renderBody()}</div>
-      <div className='card-footer'></div>
     </div>
   );
 }

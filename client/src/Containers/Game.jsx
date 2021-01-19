@@ -35,6 +35,7 @@ class Game extends Component {
     this.setStatus = this.setStatus.bind(this);
     this.setTime = this.setTime.bind(this);
     this.setData = this.setData.bind(this);
+    this.reset = this.reset.bind(this);
 
     // timer
     this.intervalID = setInterval(() => {
@@ -46,7 +47,7 @@ class Game extends Component {
 
   // state setters
   setStatus(s) {
-    if (!this.props.status) return;
+    if (!this.props.lobbyID) return;
     this.setState({
       status: s,
       time: this.state.time,
@@ -54,7 +55,7 @@ class Game extends Component {
     });
   }
   setTime(t) {
-    if (!this.props.status) return;
+    if (!this.props.lobbyID) return;
 
     let str = null;
 
@@ -80,7 +81,7 @@ class Game extends Component {
     });
   }
   setData(d) {
-    if (!this.props.status) return;
+    if (!this.props.lobbyID) return;
     this.setState({
       status: this.state.status,
       time: this.state.time,
@@ -93,6 +94,10 @@ class Game extends Component {
         board: d.board
       }
     });
+  }
+  reset() {
+    this.props.resetLobbyID();
+    this.props.resetStatus();
   }
 
   componentDidMount() {
@@ -138,6 +143,7 @@ class Game extends Component {
             data={this.state.data}
             startGame={this.startGame}
             makeMove={this.makeMove}
+            reset={this.reset}
           />
         </div>
         <div className='col-12 col-xl-4 pt-2 pt-xl-0 ps-xl-2'>
@@ -146,11 +152,7 @@ class Game extends Component {
             time={this.state.time}
             data={this.state.data}
             startGame={this.startGame}
-            // reset status before reset lobby id
-            reset={() => {
-              this.props.resetStatus();
-              this.props.resetLobbyID();
-            }}
+            reset={this.reset}
           />
         </div>
       </div>
