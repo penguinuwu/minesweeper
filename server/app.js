@@ -16,7 +16,7 @@ const sessionMiddleware = session({
     collection: 'sessions'
   }),
   cookie: {
-    secure: false, // set to true when https
+    secure: process.env.TEST ? false : true,
     maxAge: 1000 * 60 * 60 * 24 // 1 day in ms
   }
 });
