@@ -203,7 +203,8 @@ const getGame = (userIndex, game) => {
     bombs: game.bombCount - game.data.flags[game.turnIndex],
     lives:
       game.data.lives[game.turnIndex] - game.data.explosions[game.turnIndex],
-    myTurn: !game.end && (game.turnIndex === userIndex || !game.start),
+    // it is my turn if game has started, game has not ended, and index is me
+    myTurn: game.start && !game.end && game.turnIndex === userIndex,
     board: game.data.unsolved
   };
 };
