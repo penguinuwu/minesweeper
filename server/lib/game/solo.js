@@ -1,8 +1,8 @@
 const Game = require('$/models/game');
 const Lobby = require('$/models/lobby');
-const generateGame = require('$/bin/game/generate-game');
 
-const play = async (req, res, next) => {
+const playSolo = async (req, res, next) => {
+  const generateGame = require('$/bin/game/generate-game');
   // generate game
   let game = generateGame({
     shape: req.body.shape,
@@ -67,4 +67,12 @@ const play = async (req, res, next) => {
   }
 };
 
-module.exports = play;
+const lobbiesSolo = async (req, res, next) => {
+  if (!req.user) return res.status(403).send('User not logged in.');
+  return res.status(200).send({ lobbies: req.user.lobbies });
+};
+
+module.exports = {
+  lobbiesSolo: lobbiesSolo,
+  playSolo: playSolo
+};
