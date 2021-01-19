@@ -37,6 +37,12 @@ function GameStats(props) {
       {stats}
       <div className='card-footer'>
         <div className='text-center'>
+          <p>
+            Left click to reveal <i className='fas fa-bomb text-info fa-fw'></i>
+          </p>
+          <p>
+            Right click to flag <i className='fas fa-flag text-info fa-fw'></i>
+          </p>
           <button className='btn btn-sm btn-danger mb-1' onClick={props.reset}>
             Exit Game
           </button>

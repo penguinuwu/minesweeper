@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import SelectCard from './SelectCard';
 import StatusAlert from './StatusAlert';
+import UserContext from '../Contexts/UserContext';
 
 function SelectSolo(props) {
   const [shape, setShape] = useState('square');
   const [diff, setDiff] = useState('easy');
-  const [height, setHeight] = useState('2');
-  const [width, setWidth] = useState('2');
-  const [bombCount, setBombCount] = useState('1');
+  const [height, setHeight] = useState('0');
+  const [width, setWidth] = useState('0');
+  const [bombCount, setBombCount] = useState('0');
   const [status, setStatus] = useState(false);
+  const { user } = useContext(UserContext);
 
   async function generateGame(type) {
     try {
@@ -29,7 +31,6 @@ function SelectSolo(props) {
 
       // create game success
       props.setLobbyID(res.data.lobbyID);
-      props.setStatus(res.data.lobbyType);
     } catch (err) {
       if (err.response && err.response.data) {
         // authorization fail
@@ -38,6 +39,21 @@ function SelectSolo(props) {
         // server error
         setStatus('Error: cannot create game.');
       }
+    }
+  }
+
+  function renderReminder() {
+    if (user) {
+      return <span className='m-0'>You can continue past games below!</span>;
+    } else {
+      return (
+        <span className='m-0'>
+          Without an account, your games will not be saved!{' '}
+          <a className='text-info' href='/register'>
+            Register here!
+          </a>
+        </span>
+      );
     }
   }
 
@@ -187,12 +203,7 @@ function SelectSolo(props) {
           <StatusAlert status={status} />
 
           {/* register reminder */}
-          <span className='m-0'>
-            Without an account, your games will not be saved!{' '}
-            <a className='text-info' href='/register'>
-              Register here!
-            </a>
-          </span>
+          {renderReminder()}
         </div>
       </React.Fragment>
     );
