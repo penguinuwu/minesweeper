@@ -149,14 +149,16 @@ const play = async (socket) => {
       if (end) {
         socket.emit('results', getGame(userIndex, game));
 
-        // archive game
-        let user = await findUser(userID);
-        user.pastLobbies.push(lobbyID);
-        user.lobbies.splice(user.lobbies.indexOf(lobbyID), 1);
-        try {
-          await user.save();
-        } catch (err) {
-          socket.emit('status', 'Error: cannot archive game.');
+        if (userID !== process.env.TEMP) {
+          // archive game if user is logged in
+          let user = await findUser(userID);
+          try {
+            user.pastLobbies.push(lobbyID);
+            user.lobbies.splice(user.lobbies.indexOf(lobbyID), 1);
+            await user.save();
+          } catch (err) {
+            socket.emit('status', 'Error: cannot archive game.');
+          }
         }
 
         return socket.disconnect(true);
