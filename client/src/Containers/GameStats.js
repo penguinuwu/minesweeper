@@ -36,6 +36,11 @@ function GameStats(props) {
       <h2 className='card-header'>Game Stats</h2>
       {stats}
       <div className='card-footer'>
+        <div className='text-center'>
+          <button className='btn btn-sm btn-danger mb-1' onClick={props.reset}>
+            Exit Game
+          </button>
+        </div>
         <StatusAlert status={props.status} />
       </div>
     </div>

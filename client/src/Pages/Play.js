@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ModeSelect from '../Containers/ModeSelect';
-import Lobby from '../Containers/LobbySelect';
+import LobbySelect from '../Containers/LobbySelect';
 import Game from '../Containers/Game';
 
 function Play() {
@@ -22,7 +22,7 @@ function Play() {
   // show user multi lobbies
   if (status) {
     return (
-      <Lobby
+      <LobbySelect
         resetStatus={() => setStatus(false)}
         lobbyID={lobbyID}
         setLobbyID={(id) => setLobbyID(id)}
