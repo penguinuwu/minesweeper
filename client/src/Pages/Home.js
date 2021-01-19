@@ -1,26 +1,26 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
 import axios from 'axios';
 import UserContext from '../Contexts/UserContext';
+
+function verifySession(setUser) {
+  // send post request
+  axios({
+    method: 'post',
+    url: `${process.env.REACT_APP_API_URL}/login`,
+    data: {
+      username: '',
+      password: ''
+    },
+    withCredentials: true
+  })
+    .then((res) => setUser(res.data))
+    .catch((e) => setUser(false));
+};
 
 function Home() {
   const { user, setUser } = useContext(UserContext);
 
-  useEffect(() => {
-    if (!user) {
-      // send post request
-      axios({
-        method: 'post',
-        url: `${process.env.REACT_APP_API_URL}/login`,
-        data: {
-          username: '',
-          password: ''
-        },
-        withCredentials: true
-      })
-        .then((res) => setUser(res.data))
-        .catch((e) => setUser(false));
-    }
-  });
+  verifySession(setUser);
 
   function renderWelcome() {
     if (user) {
