@@ -8,7 +8,7 @@ class ModeSelect extends Component {
     this.state = {
       solo: false,
       multi: false,
-      lobbys: []
+      lobbies: []
     };
   }
 
@@ -22,9 +22,11 @@ class ModeSelect extends Component {
             this.setState({
               solo: true,
               multi: false,
-              lobbys: this.state.lobbys
+              lobbies: this.state.lobbies
             });
           }}
+          setStatus={this.props.setStatus}
+          setLobbyID={this.props.setLobbyID}
         />
         <SelectMulti
           solo={this.state.solo}
@@ -33,7 +35,7 @@ class ModeSelect extends Component {
             this.setState({
               solo: false,
               multi: true,
-              lobbys: this.state.lobbys
+              lobbies: this.state.lobbies
             });
           }}
         />

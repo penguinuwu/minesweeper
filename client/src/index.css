@@ -49,3 +49,9 @@ code {
 .darken {
   filter: brightness(50%);
 }
+
+.list-style-none {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
