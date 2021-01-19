@@ -1,21 +1,33 @@
-import React, { useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
+import axios from 'axios';
 import UserContext from '../Contexts/UserContext';
 
 function Home() {
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
 
-  function getUsername() {
-    if (user) return user;
-    return localStorage.getItem('username');
-  }
+  useEffect(() => {
+    if (!user) {
+      // send post request
+      axios({
+        method: 'post',
+        url: `${process.env.REACT_APP_API_URL}/login`,
+        data: {
+          username: '',
+          password: ''
+        },
+        withCredentials: true
+      })
+        .then((res) => setUser(res.data))
+        .catch((e) => setUser(false));
+    }
+  });
 
   function renderWelcome() {
-    let username = getUsername();
-    if (username) {
+    if (user) {
       return (
         <div className='card text-center text-light bg-dark mb-3'>
           <div className='card-body'>
-            <p className='card-text display-3'>Welcome {username}!</p>
+            <p className='card-text display-3'>Welcome {user}!</p>
           </div>
         </div>
       );
@@ -60,7 +72,7 @@ function Home() {
         </a>
       </React.Fragment>
     );
-    if (getUsername()) {
+    if (user) {
       btns = (
         <a type='button' className='btn btn-info btn-lg mx-1' href='/logout'>
           Logout

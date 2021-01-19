@@ -13,7 +13,7 @@ function Login() {
   async function requestLogin() {
     try {
       // do not request login if the user is already logged in
-      if (user || localStorage.getItem('username')) return;
+      if (user) return;
 
       // send post request
       let res = await axios({
@@ -27,9 +27,8 @@ function Login() {
       });
 
       // authorization success
-      setStatus(false);
+      setStatus('Login successful.');
       setUser(res.data);
-      localStorage.setItem('username', res.data);
     } catch (err) {
       if (err.response && err.response.data) {
         // authorization fail
@@ -43,7 +42,7 @@ function Login() {
 
   // if user is not logged in
   // then return login from
-  if (!user && !localStorage.getItem('username')) {
+  if (!user) {
     return (
       <div className='d-flex align-items-center justify-content-center'>
         <div className='card p-4 text-light bg-dark rw-30'>

@@ -3,7 +3,7 @@ const passport = require('passport');
 const login = (req, res, next) => {
   // redirect to home if logged in
   if (req.isAuthenticated())
-    return res.status(403).send('You are already logged in.');
+    return res.status(200).send(req.user.username);
 
   return passport.authenticate('local', (err, user, info) => {
     if (err) return next(err);

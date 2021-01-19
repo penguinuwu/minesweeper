@@ -2,11 +2,8 @@ import React, { useContext } from 'react';
 import UserContext from '../Contexts/UserContext';
 
 function renderAuthenticate(user) {
-  let username = localStorage.getItem('username');
-  if (!username && user) username = user;
-
   // render login and register if user not logged in
-  if (!username)
+  if (!user)
     return (
       <React.Fragment>
         <div className='nav-item'>
@@ -32,7 +29,7 @@ function renderAuthenticate(user) {
         data-bs-toggle='dropdown'
         aria-expanded='false'
       >
-        {username}
+        {user}
       </div>
       <div className='dropdown-menu dropdown-menu-right dropdown-menu-dark' aria-labelledby='userDropdown'>
         <a className='dropdown-item' href='/logout'>

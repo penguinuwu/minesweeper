@@ -13,7 +13,7 @@ function Register() {
   async function requestRegister() {
     try {
       // do not request register if the user is already logged in
-      if (user || localStorage.getItem('username')) return;
+      if (user) return;
 
       // send post request
       await axios({
@@ -41,7 +41,7 @@ function Register() {
 
   // if user is not logged in
   // then return registration from
-  if (!user && !localStorage.getItem('username')) {
+  if (!user) {
     if (status === 'success') return <Redirect to='/login' />;
     return (
       <div className='d-flex align-items-center justify-content-center'>

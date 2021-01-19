@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
-import UserContext from './Contexts/UserContext';
+import { UserProvider } from './Contexts/UserContext';
 import Navbar from './Components/Navbar';
 import Home from './Pages/Home';
 import Register from './Pages/Register';
@@ -9,11 +9,8 @@ import Logout from './Pages/Logout';
 import Play from './Pages/Play';
 
 function App() {
-  const [user, setUser] = useState(false);
-  const value = useMemo(() => ({ user, setUser }), [user]);
-
   return (
-    <UserContext.Provider value={value}>
+    <UserProvider>
       <Navbar />
       <div className='container-fluid p-3'>
         <BrowserRouter>
@@ -27,7 +24,7 @@ function App() {
           </Switch>
         </BrowserRouter>
       </div>
-    </UserContext.Provider>
+    </UserProvider>
   );
 }
 

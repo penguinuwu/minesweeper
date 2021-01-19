@@ -31,11 +31,9 @@ function Logout() {
   }
 
   async function requestLogout() {
-    setUser(false);
-    localStorage.removeItem('username');
     try {
       // do not request logout if the user is already logged out
-      if (!user && !localStorage.getItem('username'))
+      if (!user)
         return setResult(renderLogoutMsg('You are not logged in!'));
 
       // send post request
@@ -46,6 +44,7 @@ function Logout() {
       });
 
       // success
+      setUser(false);
       return setResult(renderLogoutMsg('Logout successful!'));
     } catch (err) {
       // logout fail
