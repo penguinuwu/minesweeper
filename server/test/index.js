@@ -105,7 +105,7 @@ const test = (req, res, next) => {
     <script>
       let socket = io('http://localhost:${process.env.PORT}', {
         path: '${process.env.API_ROUTE}/socket',
-        query: {'gameID': '${process.env.TEST}', 'action': 'play'}
+        query: {'lobbyID': '${process.env.TEST}', 'action': 'play'}
       });
 
       let status = document.getElementById('status');

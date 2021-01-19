@@ -52,7 +52,7 @@ const play = async (socket) => {
     socket.emit('status', 'Lobby cannot be found.');
     return socket.disconnect(true);
   }
-  const gameID = lobby.games[userID];
+  const gameID = lobby.players[userID];
 
   // get game from database
   const game = await findGame(gameID);
@@ -70,7 +70,7 @@ const play = async (socket) => {
 
   // emit results if game has ended
   if (game.end) {
-    socket.emit('results', getResults(game));
+    socket.emit('results', getGame(userIndex, game));
     return socket.disconnect(true);
   }
 
@@ -81,7 +81,7 @@ const play = async (socket) => {
   socket.on('start', async () => {
     if (game.end) {
       socket.emit('status', 'Game has already ended.');
-      socket.emit('results', getResults(game));
+      socket.emit('results', getGame(userIndex, game));
       return socket.disconnect(true);
     } else if (game.start) {
       return socket.emit('status', 'Game has already started.');
@@ -114,7 +114,7 @@ const play = async (socket) => {
   socket.on('move', async (moves) => {
     if (game.end) {
       socket.emit('status', 'Game has already ended.');
-      socket.emit('results', getResults(game));
+      socket.emit('results', getGame(userIndex, game));
       return socket.disconnect(true);
     } else if (game.turnIndex !== userIndex) {
       return socket.emit('status', 'It is not your turn.');
@@ -147,12 +147,12 @@ const play = async (socket) => {
 
       // check if game is over
       if (end) {
-        socket.emit('results', getResults(game));
+        socket.emit('results', getGame(userIndex, game));
 
         // archive game
         let user = await findUser(userID);
-        user.pastLobbys.push(gameID);
-        user.lobbys.splice(user.lobbys.indexOf(gameID), 1);
+        user.pastLobbies.push(gameID);
+        user.lobbies.splice(user.lobbies.indexOf(gameID), 1);
         try {
           await user.save();
         } catch (err) {

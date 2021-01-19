@@ -46,14 +46,15 @@ const play = async (req, res, next) => {
     let newLobby = new Lobby({
       temp: game.temp,
       lobbyType: 'solo',
-      players: { userID: newGame.id },
+      players: {},
       spectators: []
     });
+    newLobby.players[userID] = newGame.id;
     await newLobby.save();
 
-    // store game for user if user is logged in
+    // store lobby for user if user is logged in
     if (req.user) {
-      req.user.lobbys.push(newGame.id);
+      req.user.lobbies.push(newLobby.id);
       await req.user.save();
     }
 

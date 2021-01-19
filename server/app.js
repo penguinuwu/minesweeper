@@ -5,17 +5,16 @@ const app = express();
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const database = require('$/config/database');
-const SessionStore = new MongoStore({
-  mongooseConnection: database,
-  collection: 'sessions'
-});
 
 // create sessions middleware
 const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
-  store: SessionStore,
+  store: new MongoStore({
+    mongooseConnection: database,
+    collection: 'sessions'
+  }),
   cookie: {
     secure: false, // set to true when https
     maxAge: 1000 * 60 * 60 * 24 // 1 day in ms
@@ -28,7 +27,13 @@ app.use(sessionMiddleware);
 // use session middleware in socket
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, {
-  path: `${process.env.API_ROUTE}/socket`
+  path: `${process.env.API_ROUTE}/socket`,
+  cors: {
+    origin: process.env.CLIENT_URL,
+    // methods: ["GET", "POST"],
+    // allowedHeaders: ["my-custom-header"],
+    credentials: true
+  }
 });
 io.use((socket, next) => {
   sessionMiddleware(socket.request, {}, next);

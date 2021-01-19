@@ -106,8 +106,7 @@ const flag = (i, j, game) => {
   let [success, r, c] = strsToInt(i, j);
   if (!success || !isInBounds(r, c, game.height, game.width)) return false;
 
-  // if clicked on flag or bomb, then do nothing
-  if (game.data.unsolved[r][c] === CELLS_ENCODER['flag']) return false;
+  // if clicked on bomb, then do nothing
   if (game.data.unsolved[r][c] === CELLS_ENCODER['bomb']) return false;
 
   if (game.data.unsolved[r][c] === CELLS_ENCODER['flag']) {
@@ -201,18 +200,10 @@ const getGame = (userIndex, game) => {
   return {
     start: game.start,
     end: game.end,
-    flags: game.data.flags[game.turnIndex],
-    lives: game.data.lives[game.turnIndex] - game.data.explosions[game.turnIndex],
-    myTurn: game.turnIndex === userIndex,
-    board: game.data.unsolved
-  };
-};
-
-const getResults = (game) => {
-  return {
-    time: game.end - game.start,
-    flags: game.data.flags[game.turnIndex],
-    lives: game.data.lives[game.turnIndex] - game.data.explosions[game.turnIndex],
+    bombs: game.bombCount - game.data.flags[game.turnIndex],
+    lives:
+      game.data.lives[game.turnIndex] - game.data.explosions[game.turnIndex],
+    myTurn: !game.end && (game.turnIndex === userIndex || !game.start),
     board: game.data.unsolved
   };
 };
@@ -222,6 +213,5 @@ module.exports = {
   reveal: reveal,
   flag: flag,
   checkGameEnd: checkGameEnd,
-  getGame: getGame,
-  getResults: getResults
+  getGame: getGame
 };
