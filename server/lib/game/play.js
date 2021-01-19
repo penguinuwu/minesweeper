@@ -151,8 +151,8 @@ const play = async (socket) => {
 
         // archive game
         let user = await findUser(userID);
-        user.pastLobbies.push(gameID);
-        user.lobbies.splice(user.lobbies.indexOf(gameID), 1);
+        user.pastLobbies.push(lobbyID);
+        user.lobbies.splice(user.lobbies.indexOf(lobbyID), 1);
         try {
           await user.save();
         } catch (err) {
