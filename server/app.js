@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+app.set('trust proxy', 1)
 
 // set up sessions table in database
 const session = require('express-session');
