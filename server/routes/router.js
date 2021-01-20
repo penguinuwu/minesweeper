@@ -11,9 +11,11 @@ if (process.env.TEST) {
 const register = require('$/lib/authorize/register');
 const login = require('$/lib/authorize/login');
 const logout = require('$/lib/authorize/logout');
+const verify = require('$/lib/authorize/verify');
 router.post(`${API_ROUTE}/register`, register);
 router.post(`${API_ROUTE}/login`, login);
 router.post(`${API_ROUTE}/logout`, logout);
+router.post(`${API_ROUTE}/verify`, verify);
 
 // get user lobbies
 const { lobbies, pastLobbies } = require('$/lib/game/user');

@@ -19,7 +19,6 @@ class SelectLobby extends Component {
       // success
       this.setState({ lobbies: res.data.lobbies });
     } catch (err) {
-      console.log('fuck')
       this.setState({ lobbies: false });
     }
   }

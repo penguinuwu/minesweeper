@@ -6,11 +6,7 @@ function verifySession(setUser) {
   // send post request
   axios({
     method: 'post',
-    url: `${process.env.REACT_APP_API_URL}/login`,
-    data: {
-      username: '',
-      password: ''
-    },
+    url: `${process.env.REACT_APP_API_URL}/verify`,
     withCredentials: true
   })
     .then((res) => setUser(res.data))
