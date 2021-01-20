@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Minesweeper",
+  "name": "Minesweeper",
   "icons": [
     {
       "src": "favicon.ico",
@@ -13,13 +13,13 @@
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
+      "src": "logo428.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "428x428"
     }
   ],
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#000000"
 }
