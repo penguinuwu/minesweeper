@@ -17,27 +17,21 @@ function Cell(props) {
     '?': <span className='far fa-square fa-stack-2x text-light fa-fw'></span>
   };
 
-  function preventDefault(e) {
+  function rightClick(e) {
     e.preventDefault();
+    props.move('flag');
   }
 
-  function handleClick(e) {
-    preventDefault(e);
-    if (e.buttons === 1) {
-      // left click
-      props.move('reveal');
-    } else if (e.buttons === 2) {
-      // right click
-      props.move('flag');
-    }
+  function leftClick(e) {
+    props.move('reveal');
   }
 
   return (
     <button
       type='button'
       className='btn btn-sm btn-secondary'
-      onContextMenu={preventDefault}
-      onMouseDown={handleClick}
+      onContextMenu={rightClick}
+      onClick={leftClick}
       disabled={props.disabled}
     >
       <span className='fa-stack fa-1x fa-fw'>
