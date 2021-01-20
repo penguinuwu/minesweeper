@@ -7,13 +7,13 @@ function renderAuthenticate(user) {
     return (
       <React.Fragment>
         <div className='nav-item'>
-          <a className='nav-link' href='/register'>
-            Register
+          <a className='nav-link ps-lg-3' href='/register'>
+            <i className='fas fa-user-plus fa-fw'></i> Register
           </a>
         </div>
         <div className='nav-item'>
-          <a className='nav-link' href='/login'>
-            Login
+          <a className='nav-link ps-lg-3' href='/login'>
+            <i className='fas fa-sign-in-alt fa-fw'></i> Login
           </a>
         </div>
       </React.Fragment>
@@ -23,17 +23,20 @@ function renderAuthenticate(user) {
   return (
     <div className='nav-item dropdown'>
       <div
-        className='nav-link dropdown-toggle'
+        className='nav-link ps-lg-3 dropdown-toggle'
         id='userDropdown'
         role='button'
         data-bs-toggle='dropdown'
         aria-expanded='false'
       >
-        {user}
+        <i className='fas fa-user fa-fw'></i> {user}
       </div>
-      <div className='dropdown-menu dropdown-menu-right dropdown-menu-dark' aria-labelledby='userDropdown'>
+      <div
+        className='dropdown-menu dropdown-menu-right dropdown-menu-dark'
+        aria-labelledby='userDropdown'
+      >
         <a className='dropdown-item' href='/logout'>
-          Logout <i className="fas fa-sign-out-alt fa-fw"></i>
+          <i className='fas fa-sign-out-alt fa-fw'></i> Logout
         </a>
       </div>
     </div>
@@ -49,6 +52,9 @@ function Navbar() {
         {/* logo */}
         <a className='navbar-brand fs-2' href='/home'>
           Minesweeper
+          <sup>
+            <span className='badge bg-danger fs-6'>Beta</span>
+          </sup>
         </a>
 
         {/* expand navbar button */}
@@ -67,9 +73,16 @@ function Navbar() {
         {/* navbar items */}
         <div className='collapse navbar-collapse fs-4' id='navbarCollapse'>
           <div className='navbar-nav ms-auto'>
-            <a className='nav-link' href='/play'>
-              Play
-            </a>
+            <div className='nav-item'>
+              <a className='nav-link ps-lg-3' href='/play'>
+                <i className='fas fa-flag fa-fw'></i> Play
+              </a>
+            </div>
+            <div className='nav-item'>
+              <a className='nav-link ps-lg-3' href='https://git.io/JtqBk'>
+                <i className='fab fa-github fa-fw'></i> Code
+              </a>
+            </div>
             {renderAuthenticate(user)}
           </div>
         </div>
