@@ -14,7 +14,7 @@ const register = async (req, res, next) => {
     return res.status(401).send('Credentials must not be empty.');
 
   // username must be [2, 16] characters
-  if (!(2 <= pass.length && pass.length <= 16))
+  if (!(2 <= name.length && name.length <= 16))
     return res.status(401).send('Username must be 2 to 16 characters long.');
 
   // password must be [6, 30] characters
