@@ -1,6 +1,8 @@
 <h1 align="center">Online Minesweeper</h1>
-<p href="https://minesweeper.live" width="100%" align="center">
-	<img src="/client/public/logo192.png" width="30%" align="center">
+<p width="100%" align="center">
+	<a href="https://minesweeper.live">
+		<img src="/client/public/logo192.png" width="30%" align="center">
+	</a>
 </p>
 
 ## <img src="/client/public/logo192.png" width="20px"> Introduction <a name="introduction"></a>
