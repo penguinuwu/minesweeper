@@ -1,6 +1,8 @@
 import React, { useContext } from 'react';
 import axios from 'axios';
 import UserContext from '../Contexts/UserContext';
+import CatBackground from '../Images/CatBackground.png';
+import PlayMinesweeper1 from '../Images/PlayMinesweeper1.png';
 
 function verifySession(setUser) {
   // send post request
@@ -11,7 +13,7 @@ function verifySession(setUser) {
   })
     .then((res) => setUser(res.data))
     .catch((e) => setUser(false));
-};
+}
 
 function Home() {
   const { user, setUser } = useContext(UserContext);
@@ -32,27 +34,18 @@ function Home() {
   }
 
   function renderPlay() {
-    const text = 'Play Minesweeper';
     return (
-      <a className='card text-center text-dark gradient mb-3' href='/play'>
-        <div className='card-body py-5'>
-          <div className='card-text py-5'>
-            {/* hide on sm and bigger screens */}
-            <p className='d-sm-none display-5'>{text}</p>
-
-            {/* visible only on sm */}
-            <p className='d-none d-sm-block d-md-none display-4'>{text}</p>
-
-            {/* visible only on md */}
-            <p className='d-none d-md-block d-lg-none display-3'>{text}</p>
-
-            {/* visible only on lg */}
-            <p className='d-none d-lg-block d-xl-none display-2'>{text}</p>
-
-            {/* hide on screens smaller than lg */}
-            <p className='d-none d-xl-block display-1'>{text}</p>
-          </div>
-        </div>
+      <a className='card text-center text-dark border-0 mb-3 overflow-hidden' href='/play'>
+        <img
+          className='card-img-top img-fluid'
+          src={CatBackground}
+          alt='Play Minesweeper'
+        />
+        <img
+          className='card-img-top img-fluid position-absolute top-0 start-0 drop-in'
+          src={PlayMinesweeper1}
+          alt=''
+        />
       </a>
     );
   }
