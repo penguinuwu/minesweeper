@@ -20,9 +20,8 @@ a:hover {
   text-decoration: none;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.darken {
+  filter: brightness(50%);
 }
 
 .gradient {
@@ -35,6 +34,20 @@ code {
   );
 }
 
+/* https://stackoverflow.com/a/64047736 */
+.game-stack {
+  grid-area: game-stack;
+}
+
+.place-items-center {
+  place-items: center !important;
+  grid-template-areas: 'game-stack';
+}
+
+.z-index-0 {
+  z-index: 0 !important;
+}
+
 /* https://stackoverflow.com/a/22196760 */
 .vertical-center {
   min-height: 90vh;
@@ -44,10 +57,6 @@ code {
 
 .rw-30 {
   width: 30rem !important;
-}
-
-.darken {
-  filter: brightness(50%);
 }
 
 .list-style-none {

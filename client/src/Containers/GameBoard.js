@@ -2,6 +2,17 @@ import React from 'react';
 import Cell from '../Components/Cell';
 
 function GameBoard(props) {
+  let startButton = (
+    <button className='btn btn-info btn-lg' onClick={props.startGame}>
+      Start Game!
+    </button>
+  );
+  let exitButton = (
+    <button className='btn btn-info btn-lg' onClick={props.reset}>
+      Exit game
+    </button>
+  );
+
   function renderCells() {
     // counter for array key
     let counter = 0;
@@ -31,7 +42,7 @@ function GameBoard(props) {
       );
     }
 
-    return <div className='btn-group-vertical'>{cells}</div>;
+    return <div className='btn-group-vertical px-3 mx-auto game-stack'>{cells}</div>;
   }
 
   function renderBody() {
@@ -39,13 +50,11 @@ function GameBoard(props) {
     if (props.data.end) {
       return (
         <React.Fragment>
-          <p>{props.data.lives > 0 ? 'You won!' : 'You lost!'}</p>
-          <p>
-            <button className='btn btn-info btn-lg' onClick={props.reset}>
-              Exit game
-            </button>
-          </p>
           {cells}
+          <div className='rounded p-3 bg-dark game-stack z-index-0'>
+            <p>{props.data.lives > 0 ? 'You won!' : 'You lost!'}</p>
+            {exitButton}
+          </div>
         </React.Fragment>
       );
     } else if (props.data.start) {
@@ -55,12 +64,10 @@ function GameBoard(props) {
       // render start game button
       return (
         <React.Fragment>
-          <p>
-            <button className='btn btn-info btn-lg' onClick={props.startGame}>
-              Start Game!
-            </button>
-          </p>
           {cells}
+          <div className='rounded p-3 bg-dark game-stack z-index-0'>
+            {startButton}
+          </div>
         </React.Fragment>
       );
     }
@@ -69,7 +76,9 @@ function GameBoard(props) {
   return (
     <div className='card text-light bg-dark'>
       <h2 className='card-header'>Play</h2>
-      <div className='card-body text-center'>{renderBody()}</div>
+      <div className='card-body text-center px-0 overflow-auto d-grid place-items-center'>
+        {renderBody()}
+      </div>
     </div>
   );
 }
