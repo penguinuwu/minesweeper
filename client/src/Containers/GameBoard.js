@@ -42,7 +42,9 @@ function GameBoard(props) {
       );
     }
 
-    return <div className='btn-group-vertical px-3 mx-auto game-stack'>{cells}</div>;
+    return (
+      <div className='btn-group-vertical px-3 mx-auto game-stack'>{cells}</div>
+    );
   }
 
   function renderBody() {

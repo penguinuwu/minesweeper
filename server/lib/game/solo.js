@@ -4,12 +4,13 @@ const generateGame = require('$/bin/game/generate-game');
 
 const playSolo = async (req, res, next) => {
   // generate game
+  // use template strings to prevent array injection
   let game = generateGame({
-    shape: req.body.shape,
-    difficulty: req.body.difficulty,
-    height: req.body.height,
-    width: req.body.width,
-    bombCount: req.body.bombCount
+    shape: `${req.body.shape}`,
+    difficulty: `${req.body.difficulty}`,
+    height: `${req.body.height}`,
+    width: `${req.body.width}`,
+    bombCount: `${req.body.bombCount}`
   });
   if (!game) return res.status(400).send('Invalid game settings.');
 
@@ -67,5 +68,4 @@ const playSolo = async (req, res, next) => {
   }
 };
 
-module.exports = playSolo
-  
+module.exports = playSolo;
