@@ -8,8 +8,8 @@ const persistedState = localStorage.getItem('minesweeper')
 
 const Store = createStore(
   Reducer,
-  persistedState,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  persistedState
+  // window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
 
 // subscribe to localstorage
