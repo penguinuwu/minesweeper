@@ -1,8 +1,9 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import { getUser } from '../Redux/Selectors';
 import SelectCard from './SelectCard';
 import StatusAlert from './StatusAlert';
-import UserContext from '../Contexts/UserContext';
 
 function SelectSolo(props) {
   const [shape, setShape] = useState('square');
@@ -11,7 +12,7 @@ function SelectSolo(props) {
   const [width, setWidth] = useState('0');
   const [bombCount, setBombCount] = useState('0');
   const [status, setStatus] = useState(false);
-  const { user } = useContext(UserContext);
+  const user = props.username;
 
   async function generateGame(type) {
     try {
@@ -222,4 +223,5 @@ function SelectSolo(props) {
   );
 }
 
-export default SelectSolo;
+const mapStateToProps = getUser;
+export default connect(mapStateToProps)(SelectSolo);

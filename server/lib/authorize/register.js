@@ -1,13 +1,14 @@
 const createUser = require('$/bin/authorize/createUser');
 const uniqueUsername = require('$/bin/authorize/uniqueUsername');
 
-const register = async (req, res, next) => {
+const register = async (req, res) => {
   // redirect to home if logged in
   if (req.isAuthenticated())
     return res.status(401).send('You are already logged in.');
 
-  const name = req.body.username;
-  const pass = req.body.password;
+  // use template strings to prevent array injection
+  const name = `${req.body.username}`;
+  const pass = `${req.body.password}`;
 
   // username and password must not be empty
   if (!name || !pass)

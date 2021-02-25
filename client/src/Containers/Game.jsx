@@ -4,6 +4,8 @@ import GameBoard from './GameBoard';
 import GameStats from './GameStats';
 
 class Game extends Component {
+  _isMounted = false;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -46,7 +48,7 @@ class Game extends Component {
 
   // state setters
   setStatus(s) {
-    if (!this.props.lobbyID) return;
+    if (!this.props.lobbyID || !this._isMounted) return;
     this.setState({
       status: s,
       time: this.state.time,
@@ -54,7 +56,7 @@ class Game extends Component {
     });
   }
   setTime(t) {
-    if (!this.props.lobbyID) return;
+    if (!this.props.lobbyID || !this._isMounted) return;
 
     let str = null;
 
@@ -80,7 +82,7 @@ class Game extends Component {
     });
   }
   setData(d) {
-    if (!this.props.lobbyID) return;
+    if (!this.props.lobbyID || !this._isMounted) return;
     this.setState({
       status: this.state.status,
       time: this.state.time,
@@ -96,6 +98,8 @@ class Game extends Component {
   }
 
   componentDidMount() {
+    this._isMounted = true;
+
     // listeners
     this.socket.on('status', this.setStatus);
     this.socket.on('update', this.setData);
@@ -128,6 +132,7 @@ class Game extends Component {
     this.socket.off('update');
     this.socket.off('results');
     this.socket.close();
+    this._isMounted = false;
   }
 
   render() {

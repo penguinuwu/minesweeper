@@ -1,5 +1,6 @@
-import React, { useContext } from 'react';
-import UserContext from '../Contexts/UserContext';
+import React from 'react';
+import { connect } from 'react-redux';
+import { getUser } from '../Redux/Selectors';
 
 function renderAuthenticate(user) {
   // render login and register if user not logged in
@@ -32,7 +33,7 @@ function renderAuthenticate(user) {
         <i className='fas fa-user fa-fw'></i> {user}
       </div>
       <div
-        className='dropdown-menu dropdown-menu-right dropdown-menu-dark'
+        className='dropdown-menu dropdown-menu-end dropdown-menu-dark'
         aria-labelledby='userDropdown'
       >
         <a className='dropdown-item' href='/logout'>
@@ -43,15 +44,15 @@ function renderAuthenticate(user) {
   );
 }
 
-function Navbar() {
-  const { user } = useContext(UserContext);
+function Navbar(props) {
+  const user = props.username;
 
   return (
     <nav className='navbar sticky-top navbar-expand-lg navbar-dark bg-dark'>
       <div className='container-fluid'>
         {/* logo */}
         <a className='navbar-brand fs-2' href='/home'>
-          Minesweeper
+          Minesweeper{' '}
           <sup>
             <span className='badge bg-danger fs-6'>Beta</span>
           </sup>
@@ -91,4 +92,5 @@ function Navbar() {
   );
 }
 
-export default Navbar;
+const mapStateToProps = getUser;
+export default connect(mapStateToProps)(Navbar);

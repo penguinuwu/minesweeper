@@ -1,24 +1,30 @@
-import React, { useContext } from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
-import UserContext from '../Contexts/UserContext';
+import { connect } from 'react-redux';
+import { getUser } from '../Redux/Selectors';
+import { login, logout } from '../Redux/Action';
 import CatBackground from '../Images/CatBackground.png';
 import PlayMinesweeper1 from '../Images/PlayMinesweeper1.png';
 
-function verifySession(setUser) {
+function verifySession(props) {
   // send post request
   axios({
     method: 'post',
     url: `${process.env.REACT_APP_API_URL}/verify`,
     withCredentials: true
   })
-    .then((res) => setUser(res.data))
-    .catch((e) => setUser(false));
+    .then((res) => props.login(res.data))
+    .catch((_err) => props.logout());
 }
 
-function Home() {
-  const { user, setUser } = useContext(UserContext);
+function Home(props) {
+  // useEffect as componentDidMount
+  useEffect(() => {
+    verifySession(props);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  verifySession(setUser);
+  const user = props.username;
 
   function renderWelcome() {
     if (user) {
@@ -35,7 +41,10 @@ function Home() {
 
   function renderPlay() {
     return (
-      <a className='card text-center text-dark border-0 mb-3 overflow-hidden' href='/play'>
+      <a
+        className='card text-center text-dark border-0 mb-3 overflow-hidden'
+        href='/play'
+      >
         <img
           className='card-img-top img-fluid'
           src={CatBackground}
@@ -86,4 +95,6 @@ function Home() {
   );
 }
 
-export default Home;
+const mapStateToProps = getUser;
+const mapDispatchToProps = { login, logout };
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
