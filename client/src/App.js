@@ -1,6 +1,7 @@
 import React from 'react';
+import { Provider } from 'react-redux';
 import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
-import { UserProvider } from './Contexts/UserContext';
+import Store from './Redux/Store';
 import Navbar from './Components/Navbar';
 import Home from './Pages/Home';
 import Register from './Pages/Register';
@@ -10,7 +11,7 @@ import Play from './Pages/Play';
 
 function App() {
   return (
-    <UserProvider>
+    <Provider store={Store}>
       <Navbar />
       <div className='container-fluid p-3'>
         <BrowserRouter>
@@ -24,7 +25,7 @@ function App() {
           </Switch>
         </BrowserRouter>
       </div>
-    </UserProvider>
+    </Provider>
   );
 }
 

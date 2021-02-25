@@ -1,71 +1,62 @@
-import React, { useState, useContext, useEffect } from 'react';
-// import { Redirect } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import UserContext from '../Contexts/UserContext';
+import { connect } from 'react-redux';
+import { getUser } from '../Redux/Selectors';
+import { logout } from '../Redux/Action';
 
-function Logout() {
-  const [result, setResult] = useState(null);
-  const { user, setUser } = useContext(UserContext);
-
-  // function renderRedirect() {
-  //   return <Redirect to='/' />;
-  // }
-
-  function renderLogoutMsg(response) {
-    if (!response) response = 'Error: cannot logout user.';
-    return (
-      <div className='d-flex align-items-center justify-content-center'>
-        <div className='card p-4 text-light bg-dark rw-30'>
-          <div className='card-body text-center fs-2 px-3'>{response}</div>
-          <div className='card-footer text-center'>
-            <a className='btn btn-info me-1' href='/home'>
-              Home <i className='fas fa-home fa-fw'></i>
-            </a>
-            <a className='btn btn-info ms-1' href='/login'>
-              Login <i className='fas fa-sign-in-alt fa-fw'></i>
-            </a>
-          </div>
+function renderLogoutMsg(response) {
+  if (!response) response = 'Error: cannot logout user.';
+  return (
+    <div className='d-flex align-items-center justify-content-center'>
+      <div className='card p-4 text-light bg-dark rw-30'>
+        <div className='card-body text-center fs-2 px-3'>{response}</div>
+        <div className='card-footer text-center'>
+          <a className='btn btn-info me-1' href='/home'>
+            Home <i className='fas fa-home fa-fw'></i>
+          </a>
+          <a className='btn btn-info ms-1' href='/login'>
+            Login <i className='fas fa-sign-in-alt fa-fw'></i>
+          </a>
         </div>
       </div>
-    );
-  }
-
-  async function requestLogout() {
-    try {
-      // do not request logout if the user is already logged out
-      if (!user)
-        return setResult(renderLogoutMsg('You are not logged in!'));
-
-      // send post request
-      await axios({
-        method: 'post',
-        url: `${process.env.REACT_APP_API_URL}/logout`,
-        withCredentials: true
-      });
-
-      // success
-      setUser(false);
-      return setResult(renderLogoutMsg('Logout successful!'));
-    } catch (err) {
-      // logout fail
-      if (err.response && err.response.data) {
-        return setResult(renderLogoutMsg(err.response.data));
-      } else {
-        return setResult(renderLogoutMsg('Error: cannot logout.'));
-      }
-    }
-  }
-
-  function useMountEffect(func) {
-    // this effect will only be used on mount
-    // so its dependencies must be empty
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(func, []);
-  }
-
-  useMountEffect(requestLogout);
-
-  return result;
+    </div>
+  );
 }
 
-export default Logout;
+function Logout(props) {
+  const [result, setResult] = useState(null);
+
+  // useEffect as componentDidMount
+  useEffect(() => {
+    async function requestLogout() {
+      try {
+        // do not request logout if the user is already logged out
+        if (!props.username) setResult('You are not logged in!');
+        // send post request
+        await axios({
+          method: 'post',
+          url: `${process.env.REACT_APP_API_URL}/logout`,
+          withCredentials: true
+        });
+        // success
+        setResult('Logout successful!');
+      } catch (err) {
+        // logout fail
+        if (err.response && err.response.data) {
+          setResult(err.response.data);
+        } else {
+          setResult('Error: cannot logout.');
+        }
+      }
+    }
+    props.logout();
+    requestLogout();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return renderLogoutMsg(result);
+}
+
+const mapStateToProps = getUser;
+const mapDispatchToProps = { logout };
+export default connect(mapStateToProps, mapDispatchToProps)(Logout);

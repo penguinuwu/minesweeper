@@ -1,14 +1,15 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
-import UserContext from '../Contexts/UserContext';
+import { connect } from 'react-redux';
+import { getUser } from '../Redux/Selectors';
 import StatusAlert from '../Components/StatusAlert';
 
-function Register() {
+function Register(props) {
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
   const [status, setStatus] = useState(null);
-  const { user } = useContext(UserContext);
+  const user = props.username;
 
   async function requestRegister() {
     try {
@@ -100,4 +101,5 @@ function Register() {
   return <Redirect to='/' />;
 }
 
-export default Register;
+const mapStateToProps = getUser;
+export default connect(mapStateToProps)(Register);
