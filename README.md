@@ -17,6 +17,7 @@ hello! this is an implementation of minesweeper for the browser. feel free to tr
 	- mongodb, mongoose
 - client side
 	- react, react-router-dom
+	- redux
 	- axios
 	- socket.io-client
 	- bootstrap
