@@ -1,30 +1,43 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+import {
+  getModelForClass,
+  index,
+  ModelOptions,
+  mongoose,
+  prop,
+  Ref
+} from '@typegoose/typegoose';
+import { UserClass } from 'models/user';
 
-const LobbySchema = new Schema(
-  {
-    // delete lobby if it is temporary
-    temp: { type: Boolean, default: true, index: true },
-    // 'solo', 'vs', 'coop'
-    lobbyType: String,
-    // game of each player { 'User.id': 'Game.id' }
-    players: Schema.Types.Mixed,
-    // ['User.id'] of spectators
-    spectators: { type: [String], default: [] }
-  },
-  { timestamps: true }
-);
-
-// delete lobby if it is temporary
-LobbySchema.index(
+@ModelOptions({ schemaOptions: { timestamps: true } })
+@index(
   { createdAt: 1 },
   {
-    // keep 2x longer than games
+    // delete temporary lobbies after 2 days
     expireAfterSeconds: 60 * 60 * 24 * 2,
     partialFilterExpression: { temp: true }
   }
-);
+)
+class LobbyClass {
+  id!: mongoose.Types.ObjectId;
+  _id!: mongoose.Types.ObjectId;
 
-const LobbyModel = mongoose.model('Lobby', LobbySchema);
+  // delete lobby if it is temporary
+  @prop({ required: true, default: true, index: true })
+  public temp!: boolean;
 
-module.exports = LobbyModel;
+  @prop({ required: true })
+  public lobbyType!: 'solo' | 'versus' | 'coop';
+
+  // game of each player { 'User.id': 'Game.id' }
+  @prop({ required: true, default: {} })
+  public players!: mongoose.Schema.Types.Mixed;
+
+  // ['User.id'] of spectators, mongodb does not support Set right now
+  @prop({ required: true, default: [], ref: 'UserClass' })
+  public spectators!: Ref<UserClass>[];
+}
+
+const LobbyModel = getModelForClass(LobbyClass);
+
+export { LobbyClass };
+export default LobbyModel;

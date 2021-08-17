@@ -1,23 +1,31 @@
-const express = require('express');
-const app = express();
-app.set('trust proxy', 1)
+import express from 'express';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import cors from 'cors';
+import passport from 'passport';
 
-// set up sessions table in database
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
-const database = require('$/config/database');
+import passportConfig from 'config/passport';
+import database from 'config/database';
+import router from 'routes-express/index';
+import events from 'routes-socket/index';
+
+const app = express();
+app.set('trust proxy', 1);
 
 // create sessions middleware
 const sessionMiddleware = session({
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET || 'secret',
   resave: false,
   saveUninitialized: true,
-  store: new MongoStore({
-    mongooseConnection: database,
-    collection: 'sessions'
+  store: MongoStore.create({
+    // set up sessions table in database
+    client: database,
+    collectionName: 'sessions'
   }),
   cookie: {
-    secure: process.env.TEST ? false : true,
+    secure: process.env.DEV ? false : true,
     maxAge: 1000 * 60 * 60 * 24 // 1 day in ms
   }
 });
@@ -26,23 +34,17 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 
 // use session middleware in socket
-const server = require('http').createServer(app);
-const io = require('socket.io')(server, {
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
   path: `${process.env.API_ROUTE}/socket`,
   cors: {
     origin: process.env.CLIENT_URL,
-    // methods: ["GET", "POST"],
-    // allowedHeaders: ["my-custom-header"],
     credentials: true
   }
 });
-io.use((socket, next) => {
-  sessionMiddleware(socket.request, {}, next);
-});
-require('$/routes/socket')(io);
+events(io, sessionMiddleware);
 
 // enable cross-origin resource sharing
-const cors = require('cors');
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
@@ -57,15 +59,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // configure and start passport
-const passport = require('passport');
-require('$/config/passport')(passport);
+passportConfig(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
 // use custom routes
-const router = require('$/routes/router');
 app.use(router);
 
-server.listen(process.env.PORT, () => {
+httpServer.listen(process.env.PORT, () => {
   console.log(`Listening at http://localhost:${process.env.PORT}`);
 });

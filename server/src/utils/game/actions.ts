@@ -1,5 +1,6 @@
-const { CELLS_ENCODER } = require('$/bin/game/encode');
-const {
+import { GameClass } from 'models/game';
+import { CELLS_ENCODER } from 'utils/game/encode';
+import {
   isInBounds,
   isInteger,
   strsToInt,
@@ -7,15 +8,15 @@ const {
   arrayUnion,
   arraySum,
   playersAlive
-} = require('$/bin/game/helpers');
+} from 'utils/game/helpers';
 
-const nextTurn = (game) => {
+function nextTurn(game: GameClass) {
   const playerCount = Object.keys(game.players).length;
   game.turnIndex = (game.turnIndex + 1) % playerCount;
   game.markModified('turnIndex');
-};
+}
 
-const reveal = (i, j, game) => {
+function reveal(i: string, j: string, game: GameClass) {
   let [success, r, c] = strsToInt(i, j);
   if (!success || !isInBounds(r, c, game.height, game.width)) return false;
 
@@ -24,15 +25,15 @@ const reveal = (i, j, game) => {
   if (game.data.unsolved[r][c] === CELLS_ENCODER['bomb']) return false;
 
   // reveal all trivial squares
-  let queue = [];
-  let checked = [];
+  let queue: Array<[number, number]> = [];
+  let checked: Array<[number, number]> = [];
 
   if (game.data.unsolved[r][c] === CELLS_ENCODER['unknown']) {
     // if clicked on unknown, then reveal 1 cell
     queue.push([r, c]);
   } else if (isInteger(game.data.unsolved[r][c])) {
     // if clicked on number, then find surrounding trivial cells
-    let surround = [];
+    let surround: Array<[number, number]> = [];
     let surroundCount = parseInt(game.data.unsolved[r][c]);
 
     // find trivial cells
@@ -59,7 +60,6 @@ const reveal = (i, j, game) => {
     if (surroundCount === 0) arrayUnion(queue, surround);
     // DEBUG: queue
     // console.log(`q ${Array.from(queue)}`)
-
     // no trivial cells
     if (queue.length === 0) return false;
   } else {
@@ -68,7 +68,7 @@ const reveal = (i, j, game) => {
   }
 
   while (queue.length) {
-    [r, c] = queue.pop();
+    [r, c] = queue.pop()!;
     checked.push([r, c]);
 
     if (game.data.unsolved[r][c] !== CELLS_ENCODER['unknown']) continue;
@@ -97,12 +97,10 @@ const reveal = (i, j, game) => {
     }
   }
 
-  game.markModified('data.unsolved');
-  game.markModified('data.explosions');
   return true;
-};
+}
 
-const flag = (i, j, game) => {
+function flag(i: string, j: string, game: GameClass) {
   let [success, r, c] = strsToInt(i, j);
   if (!success || !isInBounds(r, c, game.height, game.width)) return false;
 
@@ -119,8 +117,8 @@ const flag = (i, j, game) => {
     game.data.flags[game.turnIndex]++;
   } else {
     // try to flag multiple blocks
+    let surround: Array<[number, number]> = [];
     let surroundCount = parseInt(game.data.unsolved[r][c]);
-    let surround = [];
 
     // check 9 surrounding directions
     for (let dr of [-1, 0, 1]) {
@@ -159,34 +157,31 @@ const flag = (i, j, game) => {
     }
   }
 
-  game.markModified('data.unsolved');
-  game.markModified('data.flags');
   return true;
-};
+}
 
-const gameEnd = (game) => {
+function gameEnd(game: GameClass) {
   if (!game.end) game.end = Date.now();
-};
+}
 
-const checkGameEnd = (game) => {
+function checkGameEnd(game: GameClass) {
   // check end time set
   if (game.end) return true;
 
   // check players alive
   const playerCount = Object.keys(game.players).length;
-  if (!playersAlive(playerCount, game.data.lives, game.data.explosions)) {
+  if (!playersAlive(playerCount, game.maxLives, game.explosions)) {
     gameEnd(game);
     return true;
   }
 
   // check if there are hidden bombs remaining
-  const revealedBombCount =
-    arraySum(game.data.flags) + arraySum(game.data.explosions);
-  if (game.bombCount === revealedBombCount) {
+  const revealedBombCount = arraySum(game.flags) + arraySum(game.explosions);
+  if (game.bombLocations.length === revealedBombCount) {
     // check bomb locations
-    for (let i = 0; i < game.bombCount; i++) {
-      let [r, c] = game.data.bombLocations[i];
-      if (game.data.unsolved[r][c] === CELLS_ENCODER['unknown']) return false;
+    for (let i = 0; i < game.bombLocations.length; i++) {
+      let [r, c] = game.bombLocations[i];
+      if (game.unsolved[r][c] === CELLS_ENCODER['unknown']) return false;
     }
     // all bomb locations are revealed
     gameEnd(game);
@@ -194,25 +189,18 @@ const checkGameEnd = (game) => {
   }
 
   return false;
-};
+}
 
-const getGame = (userIndex, game) => {
+function getGame(userIndex: number, game: GameClass) {
   return {
     start: game.start,
     end: game.end,
-    bombs: game.bombCount - game.data.flags[game.turnIndex],
-    lives:
-      game.data.lives[game.turnIndex] - game.data.explosions[game.turnIndex],
+    bombs: game.bombLocations.length - game.flags[game.turnIndex],
+    lives: game.maxLives - game.explosions[game.turnIndex],
     // it is my turn if game has started, game has not ended, and index is me
     myTurn: game.start && !game.end && game.turnIndex === userIndex,
-    board: game.data.unsolved
+    board: game.unsolved
   };
-};
+}
 
-module.exports = {
-  nextTurn: nextTurn,
-  reveal: reveal,
-  flag: flag,
-  checkGameEnd: checkGameEnd,
-  getGame: getGame
-};
+export { nextTurn, reveal, flag, checkGameEnd, getGame };

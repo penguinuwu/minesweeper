@@ -1,14 +1,14 @@
-const bcrypt = require('bcrypt');
-const User = require('$/models/user');
+import bcrypt from 'bcrypt';
+import UserModel from 'models/user';
 
-const createUser = async (name, pass) => {
+async function createUser(name: string, pass: string) {
   try {
     // generate salt and hash
     let salt = bcrypt.genSaltSync(10);
     let hash = bcrypt.hashSync(pass, salt);
 
     // create user
-    let newUser = new User({
+    let newUser = new UserModel({
       username: name,
       hash: hash
     });
@@ -20,6 +20,6 @@ const createUser = async (name, pass) => {
     console.log(err);
     return false;
   }
-};
+}
 
-module.exports = createUser;
+export default createUser;

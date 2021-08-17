@@ -46,7 +46,4 @@ const CELLS_ENCODER = {
   unknown: '?'
 };
 
-module.exports = {
-  RENDER_ENCODER: RENDER_ENCODER,
-  CELLS_ENCODER: CELLS_ENCODER
-};
+export { RENDER_ENCODER, CELLS_ENCODER };

@@ -1,6 +1,6 @@
-const User = require('$/models/user');
+import User from 'models/user';
 
-const uniqueUsername = async (name) => {
+async function uniqueUsername(name: string) {
   try {
     let user = await User.findOne({ username: name }).exec();
     if (user) return false;
@@ -9,6 +9,6 @@ const uniqueUsername = async (name) => {
     console.log(err);
     return false;
   }
-};
+}
 
-module.exports = uniqueUsername;
+export default uniqueUsername;

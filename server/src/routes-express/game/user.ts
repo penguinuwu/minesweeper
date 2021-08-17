@@ -1,14 +1,13 @@
-const lobbies = async (req, res, next) => {
+import { Request, Response } from 'express';
+
+function lobbies(req: Request, res: Response) {
   if (!req.user) return res.status(403).send('User not logged in.');
   return res.status(200).send({ lobbies: req.user.lobbies });
-};
+}
 
-const pastLobbies = async (req, res, next) => {
+function pastLobbies(req: Request, res: Response) {
   if (!req.user) return res.status(403).send('User not logged in.');
   return res.status(200).send({ lobbies: req.user.pastLobbies });
-};
+}
 
-module.exports = {
-  lobbies: lobbies,
-  pastLobbies: pastLobbies
-};
+export { lobbies, pastLobbies };

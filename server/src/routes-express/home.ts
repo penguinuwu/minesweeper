@@ -1,4 +1,6 @@
-const test = (req, res, next) => {
+import { Request, Response } from 'express';
+
+function home(req: Request, res: Response) {
   const API_ROUTE = process.env.API_ROUTE;
 
   let home = `
@@ -105,7 +107,7 @@ const test = (req, res, next) => {
     <script>
       let socket = io('http://localhost:${process.env.PORT}', {
         path: '${process.env.API_ROUTE}/socket',
-        query: {'lobbyID': '${process.env.TEST}', 'action': 'play'}
+        query: {'lobbyID': '${process.env.DEV}', 'action': 'play'}
       });
 
       let status = document.getElementById('status');
@@ -124,7 +126,7 @@ const test = (req, res, next) => {
         socket.emit('move', {'action': act.value, 'row': movex.value, 'col': movey.value});
       });
 
-      const showBoard = (array) => {
+      function showBoard(array) {
         for (let r = 0; r < array.length; r++) {
           console.log(array[r].join());
         }
@@ -143,6 +145,6 @@ const test = (req, res, next) => {
     ${login}
     ${logout}
   `);
-};
+}
 
-module.exports = test;
+export default home;

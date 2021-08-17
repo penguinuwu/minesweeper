@@ -1,16 +1,29 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+import { getModelForClass, mongoose, prop, Ref } from '@typegoose/typegoose';
+import { LobbyClass } from 'models/lobby';
 
-const UserSchema = new Schema({
-  username: String,
-  email: String,
-  hash: String,
+class UserClass {
+  id!: mongoose.Types.ObjectId;
+  _id!: mongoose.Types.ObjectId;
+
+  @prop({ required: true })
+  public username!: string;
+
+  @prop({ required: false })
+  public email?: string;
+
+  @prop({ required: true })
+  public hash!: string;
+
   // user's lobbies ["Lobby.id"]
-  lobbies: { type: [String], default: [] },
+  @prop({ required: true, default: [], ref: 'LobbyClass' })
+  public lobbies!: Ref<LobbyClass>[];
+
   // user's past ["Lobby.id"]
-  pastLobbies: { type: [String], default: [] }
-});
+  @prop({ required: true, default: [], ref: 'LobbyClass' })
+  public pastLobbies!: Ref<LobbyClass>[];
+}
 
-const UserModel = mongoose.model('User', UserSchema);
+const UserModel = getModelForClass(UserClass);
 
-module.exports = UserModel;
+export { UserClass };
+export default UserModel;

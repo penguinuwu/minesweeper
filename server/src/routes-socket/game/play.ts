@@ -1,44 +1,44 @@
-const User = require('$/models/user');
-const Lobby = require('$/models/lobby');
-const Game = require('$/models/game');
-const { isInteger } = require('$/bin/game/helpers');
-const {
+import UserModel, { UserClass } from 'models/user';
+import LobbyModel, { LobbyClass } from 'models/lobby';
+import GameModel, { GameClass } from 'models/game';
+import { isInteger } from 'utils/game/helpers';
+import {
   nextTurn,
   reveal,
   flag,
   checkGameEnd,
-  getGame,
-  getResults
-} = require('$/bin/game/square/actions');
+  getGame
+} from 'utils/game/actions';
+import { Socket } from 'socket.io';
 
-const findLobby = async (lobbyID) => {
+async function findLobby(lobbyID: LobbyClass) {
   if (!lobbyID) return null;
   try {
-    return await Lobby.findById(lobbyID).exec();
+    return await LobbyModel.findById(lobbyID).exec();
   } catch (err) {
     return null;
   }
-};
+}
 
-const findGame = async (gameID) => {
+async function findGame(gameID: GameClass) {
   if (!gameID) return null;
   try {
-    return await Game.findById(gameID).exec();
+    return await GameModel.findById(gameID).exec();
   } catch (err) {
     return null;
   }
-};
+}
 
-const findUser = async (userID) => {
+async function findUser(userID: UserClass) {
   if (!userID) return null;
   try {
-    return await User.findById(userID).exec();
+    return await UserModel.findById(userID).exec();
   } catch (err) {
     return null;
   }
-};
+}
 
-const play = async (socket) => {
+async function play(socket: Socket) {
   const passport = socket.request.session.passport;
   const query = socket.handshake.query;
 
@@ -165,6 +165,6 @@ const play = async (socket) => {
       }
     }
   });
-};
+}
 
-module.exports = play;
+export default play;

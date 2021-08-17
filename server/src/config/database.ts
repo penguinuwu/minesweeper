@@ -1,11 +1,12 @@
-const mongoose = require('mongoose');
-mongoose.connect(process.env.DB_STRING, {
+import mongoose from 'mongoose';
+
+mongoose.connect(process.env.DB_STRING || 'mongodb://localhost/minesweeper', {
   useCreateIndex: true, // deprecation warning with Schema.index()
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
 
-const database = mongoose.connection;
+const database = mongoose.connection.getClient();
 database.on('error', console.error.bind(console, 'connection error:'));
 
-module.exports = database;
+export default database;

@@ -1,38 +1,73 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+import {
+  getModelForClass,
+  index,
+  ModelOptions,
+  mongoose,
+  prop,
+  Severity
+} from '@typegoose/typegoose';
 
-const GameSchema = new Schema(
-  {
-    temp: { type: Boolean, default: true, index: true },
-    shape: String,                // shape of board (square, hexagon, etc)
-    height: Number,
-    width: Number,
-    bombCount: Number,
-    start: { type: Date, default: undefined },
-    end: { type: Date, default: undefined },
-    turnIndex: Number,            // whos turn is it
-    players: Schema.Types.Mixed,  // index of each player { "User.id": Number }
-    data: {
-      lives: [Number],            // max lives per player index
-      flags: [Number],            // flags by player index
-      explosions: [Number],       // explosions caused by player index
-      bombLocations: [[Number]],
-      solved: [[String]],         // solution board
-      unsolved: [[String]]        // unsolved board
-    }
-  },
-  { timestamps: true }
-);
-
-// delete game if it is temporary
-GameSchema.index(
+@ModelOptions({
+  schemaOptions: { timestamps: true }
+  // options: { allowMixed: Severity.ALLOW }
+})
+@index(
   { createdAt: 1 },
   {
-    expireAfterSeconds: 60 * 60 * 24,
+    // delete temporary games after 1 day
+    // expireAfterSeconds: 60 * 60 * 24,
+    expireAfterSeconds: 60, //TODO: remove testing
     partialFilterExpression: { temp: true }
   }
-);
+)
+class GameClass {
+  id!: mongoose.Types.ObjectId;
+  _id!: mongoose.Types.ObjectId;
 
-const GameModel = mongoose.model('Game', GameSchema);
+  //#region settings constants
+  @prop({ required: true })
+  public height!: number;
+  @prop({ required: true })
+  public width!: number;
+  @prop({ required: true }) // maximum amount of lives
+  public maxLives!: number;
+  @prop({ required: true }) // bomb coordinates
+  public bombLocations!: Array<[number, number]>;
+  @prop({ required: true }) // solution board
+  public solved!: Array<Array<string>>;
+  // whether the game should be deleted automatically
+  @prop({ required: true, default: true, index: true })
+  public temp!: boolean;
+  //#endregion
 
-module.exports = GameModel;
+  //#region time in milliseconds elapsed since 1970/01/01, e.g. Date.now()
+  @prop({ required: true, default: undefined })
+  public start?: number;
+  @prop({ required: true, default: undefined }) // undefined until game ends
+  public end?: number;
+  //#endregion
+
+  //#region player mapping
+  // index of each player { 'User.id': Number }
+  @prop({ required: true, default: {} })
+  public players!: mongoose.Schema.Types.Mixed;
+  //#endregion
+
+  //#region mutable fields
+  @prop({ required: true }) // gameplay unsolved board
+  public unsolved!: Array<Array<string>>;
+  @prop({ required: true, default: [] }) // flags by player index
+  public flags!: Array<number>;
+  @prop({ required: true, default: [] }) // explosions caused by player index
+  public explosions!: Array<number>;
+  @prop({ required: true, default: 0 }) // index of current turn player
+  public turnIndex!: number;
+  @prop({ required: true, default: 0 }) // amount of revealed blocks
+  public revealed!: number;
+  //#endregion
+}
+
+const GameModel = getModelForClass(GameClass);
+
+export { GameClass };
+export default GameModel;

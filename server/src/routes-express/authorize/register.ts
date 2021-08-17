@@ -1,7 +1,8 @@
-const createUser = require('$/bin/authorize/createUser');
-const uniqueUsername = require('$/bin/authorize/uniqueUsername');
+import { Request, Response } from 'express';
+import createUser from 'utils/authorize/createUser';
+import uniqueUsername from 'utils/authorize/uniqueUsername';
 
-const register = async (req, res) => {
+async function register(req: Request, res: Response) {
   // redirect to home if logged in
   if (req.isAuthenticated())
     return res.status(401).send('You are already logged in.');
@@ -29,6 +30,6 @@ const register = async (req, res) => {
     return res.status(401).send('Error: cannot register user.');
 
   return res.status(200).send(process.env.SUCCESS);
-};
+}
 
-module.exports = register;
+export default register;

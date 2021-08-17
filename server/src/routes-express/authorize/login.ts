@@ -1,11 +1,12 @@
-const passport = require('passport');
+import { Request, Response, NextFunction } from 'express';
+import passport from 'passport';
 
-const login = (req, res, next) => {
+function login(req: Request, res: Response, next: NextFunction) {
   // redirect to home if logged in
   if (req.isAuthenticated())
     return res.status(200).send({ username: req.user.username });
 
-  return passport.authenticate('local', (err, user, info) => {
+  return passport.authenticate('local', (err, user, _info) => {
     if (err) return next(err);
     if (!user) return res.status(401).send('Incorrect credentials.');
 
@@ -14,6 +15,6 @@ const login = (req, res, next) => {
       return res.status(200).send({ username: user.username });
     });
   })(req, res, next);
-};
+}
 
-module.exports = login;
+export default login;
