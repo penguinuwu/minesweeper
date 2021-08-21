@@ -7,10 +7,16 @@ import {
   prop,
   Ref
 } from '@typegoose/typegoose';
-import { WhatIsIt } from '@typegoose/typegoose/lib/internal/constants';
+import {
+  Severity,
+  WhatIsIt
+} from '@typegoose/typegoose/lib/internal/constants';
 import { UserClass } from 'models/user';
 
-@ModelOptions({ schemaOptions: { timestamps: true } })
+@ModelOptions({
+  schemaOptions: { timestamps: true },
+  options: { allowMixed: Severity.ALLOW }
+})
 @index(
   { createdAt: 1 },
   {

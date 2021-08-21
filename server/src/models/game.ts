@@ -6,11 +6,14 @@ import {
   mongoose,
   prop
 } from '@typegoose/typegoose';
-import { WhatIsIt } from '@typegoose/typegoose/lib/internal/constants';
+import {
+  Severity,
+  WhatIsIt
+} from '@typegoose/typegoose/lib/internal/constants';
 
 @ModelOptions({
-  schemaOptions: { timestamps: true }
-  // options: { allowMixed: Severity.ALLOW }
+  schemaOptions: { timestamps: true },
+  options: { allowMixed: Severity.ALLOW }
 })
 @index(
   { createdAt: 1 },

@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import UserModel from 'models/user';
 
 async function createUser(name: string, pass: string) {
