@@ -1,27 +1,36 @@
 import { CELLS_ENCODER } from 'utils/game/encode';
-import { isInBounds, isInteger, tsHasOwnProperty } from 'utils/game/helpers';
+import { isInBounds, isInteger } from 'utils/game/helpers';
 
 // https://dash.harvard.edu/bitstream/handle/1/14398552/BECERRA-SENIORTHESIS-2015.pdf
-const DEFAULT_DIFFICULTIES = {
-  easy: {
-    height: 10,
-    width: 10,
-    bombCount: 10,
-    maxLives: 3
-  },
-  intermediate: {
-    height: 16,
-    width: 16,
-    bombCount: 40,
-    maxLives: 2
-  },
-  expert: {
-    height: 30,
-    width: 16,
-    bombCount: 99,
-    maxLives: 1
-  }
-} as const;
+const DEFAULT_DIFFICULTIES = new Map([
+  [
+    'easy',
+    {
+      height: 10,
+      width: 10,
+      bombCount: 10,
+      maxLives: 3
+    } as const
+  ],
+  [
+    'intermediate',
+    {
+      height: 16,
+      width: 16,
+      bombCount: 40,
+      maxLives: 2
+    } as const
+  ],
+  [
+    'expert',
+    {
+      height: 30,
+      width: 16,
+      bombCount: 99,
+      maxLives: 1
+    } as const
+  ]
+]);
 
 interface GameSettings {
   // String 'easy' | 'intermediate' | 'expert' | 'custom'
@@ -38,7 +47,7 @@ interface GameSettings {
 
 function generateGame(settings: GameSettings) {
   // parse difficulty settings
-  let diff = parseDifficulty(settings);
+  const diff = parseDifficulty(settings);
   if (!diff) return null;
 
   // generate bomb locations
@@ -54,22 +63,24 @@ function generateGame(settings: GameSettings) {
   let unsolved = generateUnknownBoard(diff.height, diff.width);
   if (!unsolved || !solved) return null;
 
-  let game = {
-    height: diff.height,
-    width: diff.width,
-    maxLives: diff.maxLives, // give all players these lives
-    bombLocations: bombLocations,
-    solved: solved,
-    unsolved: unsolved
-  };
+  let game = new Map<string, any>([
+    ['height', diff.height],
+    ['width', diff.width],
+    ['maxLives', diff.maxLives], // give all players these lives
+    ['bombLocations', bombLocations],
+    ['solved', solved],
+    ['unsolved', unsolved]
+  ]);
 
   return game;
 }
 
 function parseDifficulty(settings: GameSettings) {
   // check if difficulty is easy, intermediate, or expert
-  if (tsHasOwnProperty(DEFAULT_DIFFICULTIES, settings.difficulty))
-    return DEFAULT_DIFFICULTIES[settings.difficulty];
+  const diff = DEFAULT_DIFFICULTIES.get(settings.difficulty);
+  if (diff) return diff;
+  // note: interesting ts flow analysis workaround
+  // https://github.com/microsoft/TypeScript/issues/13086#issuecomment-268461298
 
   // check if height, width, bombCount, maxLives all exist as integers
   if (
@@ -80,10 +91,10 @@ function parseDifficulty(settings: GameSettings) {
   )
     return null;
 
-  let intHeight = parseInt(settings.height);
-  let intWidth = parseInt(settings.width);
-  let intBombCount = parseInt(settings.bombCount);
-  let intMaxLives = parseInt(settings.maxLives);
+  const intHeight = parseInt(settings.height);
+  const intWidth = parseInt(settings.width);
+  const intBombCount = parseInt(settings.bombCount);
+  const intMaxLives = parseInt(settings.maxLives);
 
   // check if board dimensions are invalid
   if (
@@ -99,7 +110,7 @@ function parseDifficulty(settings: GameSettings) {
     width: intWidth,
     bombCount: intBombCount,
     maxLives: intMaxLives
-  };
+  } as const;
 }
 
 function shuffleArray<Type>(array: Array<Array<Type>>) {

@@ -3,11 +3,11 @@
   "version": "0.4.0",
   "private": true,
   "scripts": {
-    "start": "tsc && node -r dotenv/config dist/app.js dotenv_config_path=./.env",
-    "dev": "ts-node-dev -r dotenv/config src/app.ts dotenv_config_path=./.env",
+    "start": "tsc && node -r dotenv/config ./dist/app.js dotenv_config_path=./.env",
+    "dev": "ts-node-dev -r dotenv/config ./src/app.ts dotenv_config_path=./.env",
     "build": "tsc",
     "prettier-format": "prettier --write src/**/*.ts",
-    "clean": "rm -rf dest",
+    "clean": "rm -rf ./dest/",
     "test": "echo \"Probably works :3\""
   },
   "dependencies": {

@@ -1,16 +1,32 @@
-import { RequestHandler } from 'express';
+import { IncomingMessage } from 'http';
+import { SessionData } from 'express-session';
 import { Server, Socket } from 'socket.io';
 import play from 'routes-socket/game/play';
 import spectate from 'routes-socket/game/spectate';
 
-function events(io: Server, sessionMiddleware: RequestHandler) {
-  // weird wrapper, there might exist a better solution
-  // https://socket.io/docs/v4/middlewares/#Compatibility-with-Express-middleware
-  const wrap = (middleware: any) => (socket: Socket, next: any) =>
-    middleware(socket.request, {}, next);
-  io.use(wrap(sessionMiddleware));
+declare module 'express-session' {
+  interface SessionData {
+    passport: { user: string };
+  }
+}
+interface SessionIncomingMessage extends IncomingMessage {
+  session: SessionData;
+}
+interface SessionSocket extends Socket {
+  request: SessionIncomingMessage;
+}
 
-  io.on('connect', (socket: Socket) => {
+// weird wrapper, there might exist a better solution
+// https://socket.io/docs/v4/middlewares/#Compatibility-with-Express-middleware
+function socketWrapper(middleware: any) {
+  return (socket: Socket, next: any) => middleware(socket.request, {}, next);
+}
+
+function socketEvents(io: Server) {
+  io.on('connect', (defaultSocket: Socket) => {
+    const socket = <SessionSocket>defaultSocket;
+    socket.request.session.passport;
+    // socket.request.session;
     if (socket.handshake.query.action === 'play') {
       play(socket);
     } else if (socket.handshake.query.action === 'spectate') {
@@ -22,4 +38,4 @@ function events(io: Server, sessionMiddleware: RequestHandler) {
   });
 }
 
-export default events;
+export { SessionSocket, socketEvents, socketWrapper };

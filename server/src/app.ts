@@ -9,7 +9,7 @@ import passport from 'passport';
 import passportConfig from 'config/passport';
 import database from 'config/database';
 import router from 'routes-express/index';
-import events from 'routes-socket/index';
+import { socketEvents, socketWrapper } from 'routes-socket/index';
 
 const app = express();
 app.set('trust proxy', 1);
@@ -42,7 +42,8 @@ const io = new Server(httpServer, {
     credentials: true
   }
 });
-events(io, sessionMiddleware);
+io.use(socketWrapper(sessionMiddleware));
+socketEvents(io);
 
 // enable cross-origin resource sharing
 app.use(

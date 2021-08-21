@@ -1,4 +1,5 @@
 import {
+  DocumentType,
   getModelForClass,
   index,
   ModelOptions,
@@ -6,6 +7,7 @@ import {
   prop,
   Ref
 } from '@typegoose/typegoose';
+import { WhatIsIt } from '@typegoose/typegoose/lib/internal/constants';
 import { UserClass } from 'models/user';
 
 @ModelOptions({ schemaOptions: { timestamps: true } })
@@ -29,8 +31,8 @@ class LobbyClass {
   public lobbyType!: 'solo' | 'versus' | 'coop';
 
   // game of each player { 'User.id': 'Game.id' }
-  @prop({ required: true, default: {} })
-  public players!: mongoose.Schema.Types.Mixed;
+  @prop({ required: true, default: new Map() }, WhatIsIt.MAP)
+  public players!: mongoose.Types.Map<number>;
 
   // ['User.id'] of spectators, mongodb does not support Set right now
   @prop({ required: true, default: [], ref: 'UserClass' })
@@ -38,6 +40,16 @@ class LobbyClass {
 }
 
 const LobbyModel = getModelForClass(LobbyClass);
+type LobbyDocument = DocumentType<LobbyClass>;
 
-export { LobbyClass };
+async function findLobby(id: string | mongoose.Types.ObjectId | undefined) {
+  if (!id) return null;
+  try {
+    return await LobbyModel.findById(id).exec();
+  } catch (err) {
+    return null;
+  }
+}
+
+export { LobbyClass, LobbyDocument, findLobby };
 export default LobbyModel;

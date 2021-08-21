@@ -1,13 +1,12 @@
 import { Request, Response } from 'express';
 import GameModel from 'models/game';
 import LobbyModel from 'models/lobby';
-import UserModel from 'models/user';
 import generateGame from 'utils/game/generate-game';
 
 async function playSolo(req: Request, res: Response) {
   // generate game
   // use template strings to prevent array injection
-  let game = generateGame({
+  const game = generateGame({
     difficulty: `${req.body.difficulty}`,
     height: `${req.body.height}`,
     width: `${req.body.width}`,
@@ -17,40 +16,41 @@ async function playSolo(req: Request, res: Response) {
   if (!game) return res.status(400).send('Invalid game settings.');
 
   // add user id or temp user
-  let userID = req.user ? `${req.user.id}` : `${process.env.TEMP}`;
-  let userIndex = 1;
-  let players = { [userID]: userIndex };
+  const userID = req.user ? `${req.user.id}` : `${process.env.TEMP}`;
+  const userIndex = 1;
+  const players = new Map([[userID, userIndex]]);
 
-  let flags = [0];
-  let explosions = [0];
-  let temp = userID === process.env.TEMP;
+  const flags = [0];
+  const explosions = [0];
+  const temp = userID === process.env.TEMP;
 
   // store game
   try {
-    let newGame = await GameModel.create({
+    const newGame = new GameModel({
       temp: temp,
-      height: game.height,
-      width: game.width,
-      maxLives: game.maxLives,
-      bombLocations: game.bombLocations,
-      solved: game.solved,
-      unsolved: game.unsolved,
+      height: game.get('height'),
+      width: game.get('width'),
+      maxLives: game.get('maxLives'),
+      bombLocations: game.get('bombLocations'),
+      solved: game.get('solved'),
+      unsolved: game.get('unsolved'),
       players: players,
       flags: flags,
       explosions: explosions
     });
+    await newGame.save();
 
-    let newLobby = await LobbyModel.create({
+    const newLobby = new LobbyModel({
       temp: temp,
       lobbyType: 'solo',
       players: { [userID]: newGame.id }
     });
+    await newLobby.save();
 
     // store lobby for user if user is logged in
     if (req.user) {
-      await UserModel.findByIdAndUpdate(req.user.id, {
-        $push: { lobbies: newLobby.id }
-      });
+      req.user.lobbies.push(newLobby.id);
+      await req.user.save();
     }
 
     return res

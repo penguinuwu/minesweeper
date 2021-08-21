@@ -1,4 +1,10 @@
-import { getModelForClass, mongoose, prop, Ref } from '@typegoose/typegoose';
+import {
+  DocumentType,
+  getModelForClass,
+  mongoose,
+  prop,
+  Ref
+} from '@typegoose/typegoose';
 import { LobbyClass } from 'models/lobby';
 
 class UserClass {
@@ -24,6 +30,16 @@ class UserClass {
 }
 
 const UserModel = getModelForClass(UserClass);
+type UserDocument = DocumentType<UserClass>;
 
-export { UserClass };
+async function findUser(id: string | mongoose.Types.ObjectId | undefined) {
+  if (!id) return null;
+  try {
+    return await UserModel.findById(id).exec();
+  } catch (err) {
+    return null;
+  }
+}
+
+export { UserClass, UserDocument, findUser };
 export default UserModel;

@@ -1,4 +1,4 @@
-import { GameClass } from 'models/game';
+import { GameDocument } from 'models/game';
 import { CELLS_ENCODER } from 'utils/game/encode';
 import {
   isInBounds,
@@ -7,34 +7,33 @@ import {
   isElementOf,
   arrayUnion,
   arraySum,
-  playersAlive
+  playersDead
 } from 'utils/game/helpers';
 
-function nextTurn(game: GameClass) {
-  const playerCount = Object.keys(game.players).length;
+function nextTurn(game: GameDocument) {
+  const playerCount = game.players.size;
   game.turnIndex = (game.turnIndex + 1) % playerCount;
-  game.markModified('turnIndex');
 }
 
-function reveal(i: string, j: string, game: GameClass) {
-  let [success, r, c] = strsToInt(i, j);
+function reveal(i: string | number, j: string | number, game: GameDocument) {
+  let [success, r, c] = strsToInt(`${i}`, `${j}`);
   if (!success || !isInBounds(r, c, game.height, game.width)) return false;
 
   // if clicked on flag or bomb, then do nothing
-  if (game.data.unsolved[r][c] === CELLS_ENCODER['flag']) return false;
-  if (game.data.unsolved[r][c] === CELLS_ENCODER['bomb']) return false;
+  if (game.unsolved[r][c] === CELLS_ENCODER['flag']) return false;
+  if (game.unsolved[r][c] === CELLS_ENCODER['bomb']) return false;
 
   // reveal all trivial squares
   let queue: Array<[number, number]> = [];
   let checked: Array<[number, number]> = [];
 
-  if (game.data.unsolved[r][c] === CELLS_ENCODER['unknown']) {
+  if (game.unsolved[r][c] === CELLS_ENCODER['unknown']) {
     // if clicked on unknown, then reveal 1 cell
     queue.push([r, c]);
-  } else if (isInteger(game.data.unsolved[r][c])) {
+  } else if (isInteger(game.unsolved[r][c])) {
     // if clicked on number, then find surrounding trivial cells
     let surround: Array<[number, number]> = [];
-    let surroundCount = parseInt(game.data.unsolved[r][c]);
+    let surroundCount = parseInt(game.unsolved[r][c]);
 
     // find trivial cells
     for (let dr of [-1, 0, 1]) {
@@ -47,11 +46,11 @@ function reveal(i: string, j: string, game: GameClass) {
 
         // check if its a bomb, flag, or unknown
         if (
-          game.data.unsolved[r2][c2] === CELLS_ENCODER['flag'] ||
-          game.data.unsolved[r2][c2] === CELLS_ENCODER['bomb']
+          game.unsolved[r2][c2] === CELLS_ENCODER['flag'] ||
+          game.unsolved[r2][c2] === CELLS_ENCODER['bomb']
         ) {
           surroundCount--;
-        } else if (game.data.unsolved[r2][c2] === CELLS_ENCODER['unknown']) {
+        } else if (game.unsolved[r2][c2] === CELLS_ENCODER['unknown']) {
           surround.push([r2, c2]);
         }
       }
@@ -71,12 +70,13 @@ function reveal(i: string, j: string, game: GameClass) {
     [r, c] = queue.pop()!;
     checked.push([r, c]);
 
-    if (game.data.unsolved[r][c] !== CELLS_ENCODER['unknown']) continue;
+    if (game.unsolved[r][c] !== CELLS_ENCODER['unknown']) continue;
 
     // reveal cell
-    game.data.unsolved[r][c] = game.data.solved[r][c];
+    game.unsolved[r][c] = game.solved[r][c];
+    game.revealed++;
 
-    if (game.data.unsolved[r][c] === CELLS_ENCODER['0']) {
+    if (game.unsolved[r][c] === CELLS_ENCODER['0']) {
       // if revealed cell is 0, then reveal surrounding unknown cells
       for (let dr of [-1, 0, 1]) {
         for (let dc of [-1, 0, 1]) {
@@ -87,38 +87,38 @@ function reveal(i: string, j: string, game: GameClass) {
             isElementOf([r2, c2], checked)
           )
             continue;
-          if (game.data.unsolved[r2][c2] === CELLS_ENCODER['unknown'])
+          if (game.unsolved[r2][c2] === CELLS_ENCODER['unknown'])
             queue.push([r2, c2]);
         }
       }
-    } else if (game.data.unsolved[r][c] === CELLS_ENCODER['bomb']) {
+    } else if (game.unsolved[r][c] === CELLS_ENCODER['bomb']) {
       // bomb revealed
-      game.data.explosions[game.turnIndex]++;
+      game.explosions[game.turnIndex]++;
     }
   }
 
   return true;
 }
 
-function flag(i: string, j: string, game: GameClass) {
+function flag(i: string, j: string, game: GameDocument) {
   let [success, r, c] = strsToInt(i, j);
   if (!success || !isInBounds(r, c, game.height, game.width)) return false;
 
   // if clicked on bomb, then do nothing
-  if (game.data.unsolved[r][c] === CELLS_ENCODER['bomb']) return false;
+  if (game.unsolved[r][c] === CELLS_ENCODER['bomb']) return false;
 
-  if (game.data.unsolved[r][c] === CELLS_ENCODER['flag']) {
+  if (game.unsolved[r][c] === CELLS_ENCODER['flag']) {
     // remove flag
-    game.data.unsolved[r][c] = CELLS_ENCODER['unknown'];
-    game.data.flags[game.turnIndex]--;
-  } else if (game.data.unsolved[r][c] === CELLS_ENCODER['unknown']) {
+    game.unsolved[r][c] = CELLS_ENCODER['unknown'];
+    game.flags[game.turnIndex]--;
+  } else if (game.unsolved[r][c] === CELLS_ENCODER['unknown']) {
     // flag unknown block
-    game.data.unsolved[r][c] = CELLS_ENCODER['flag'];
-    game.data.flags[game.turnIndex]++;
+    game.unsolved[r][c] = CELLS_ENCODER['flag'];
+    game.flags[game.turnIndex]++;
   } else {
     // try to flag multiple blocks
     let surround: Array<[number, number]> = [];
-    let surroundCount = parseInt(game.data.unsolved[r][c]);
+    let surroundCount = parseInt(game.unsolved[r][c]);
 
     // check 9 surrounding directions
     for (let dr of [-1, 0, 1]) {
@@ -134,11 +134,11 @@ function flag(i: string, j: string, game: GameClass) {
           continue;
 
         if (
-          game.data.unsolved[r2][c2] === CELLS_ENCODER['flag'] ||
-          game.data.unsolved[r2][c2] === CELLS_ENCODER['bomb']
+          game.unsolved[r2][c2] === CELLS_ENCODER['flag'] ||
+          game.unsolved[r2][c2] === CELLS_ENCODER['bomb']
         ) {
           surroundCount--;
-        } else if (game.data.unsolved[r2][c2] === CELLS_ENCODER['unknown']) {
+        } else if (game.unsolved[r2][c2] === CELLS_ENCODER['unknown']) {
           surroundCount--;
           surround.push([r2, c2]);
         }
@@ -148,8 +148,8 @@ function flag(i: string, j: string, game: GameClass) {
     if (surroundCount === 0 && surround.length !== 0) {
       // if all bombs are accounted for, then place trivial flags
       for ([r, c] of surround) {
-        game.data.unsolved[r][c] = CELLS_ENCODER['flag'];
-        game.data.flags[game.turnIndex]++;
+        game.unsolved[r][c] = CELLS_ENCODER['flag'];
+        game.flags[game.turnIndex]++;
       }
     } else {
       // no trivial flags
@@ -160,17 +160,17 @@ function flag(i: string, j: string, game: GameClass) {
   return true;
 }
 
-function gameEnd(game: GameClass) {
+function gameEnd(game: GameDocument) {
   if (!game.end) game.end = Date.now();
 }
 
-function checkGameEnd(game: GameClass) {
+function checkGameEnd(game: GameDocument) {
   // check end time set
   if (game.end) return true;
 
-  // check players alive
+  // check if any player has died
   const playerCount = Object.keys(game.players).length;
-  if (!playersAlive(playerCount, game.maxLives, game.explosions)) {
+  if (!playersDead(playerCount, game.maxLives, game.explosions)) {
     gameEnd(game);
     return true;
   }
@@ -191,7 +191,7 @@ function checkGameEnd(game: GameClass) {
   return false;
 }
 
-function getGame(userIndex: number, game: GameClass) {
+function getGame(userIndex: number, game: GameDocument) {
   return {
     start: game.start,
     end: game.end,

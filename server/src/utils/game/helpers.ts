@@ -7,8 +7,8 @@ function isInBounds(
   return 0 <= r && r < height && 0 <= c && c < width;
 }
 
-function isInteger(i: string) {
-  return /^-?\d+$/.test(i);
+function isInteger(i: string | number) {
+  return /^-?\d+$/.test(`${i}`);
 }
 
 function strsToInt(i: string, j: string): [boolean, number, number] {
@@ -38,30 +38,15 @@ function arraySum(array: Array<number>): number {
   return total;
 }
 
-// return whether there are players alive in the game
-function playersAlive(
+// return whether there are any dead players in the game
+function playersDead(
   playersCount: number,
   maxLives: number,
   explosions: Array<number>
 ): boolean {
   for (let i = 0; i < playersCount; i++)
-    if (maxLives - explosions[i] > 0) return true;
+    if (maxLives - explosions[i] <= 0) return true;
   return false;
-}
-
-// ts https://stackoverflow.com/a/58962072
-function tsHasOwnProperty<T extends object>(obj: T, key: any): key is keyof T {
-  return key && obj && obj.hasOwnProperty(key) && key in obj;
-}
-
-// ts workaround https://stackoverflow.com/a/59459000
-function getObjectKeys<T extends object>(obj: T) {
-  return Object.keys(obj) as Array<keyof typeof obj>;
-}
-
-// ts workaround https://stackoverflow.com/q/48134984
-function getObjectValue<T extends object>(obj: T, key: keyof T, def: any): any {
-  return obj && obj.hasOwnProperty(key) ? obj[key] : def;
 }
 
 export {
@@ -71,8 +56,5 @@ export {
   isElementOf,
   arrayUnion,
   arraySum,
-  playersAlive,
-  tsHasOwnProperty,
-  getObjectKeys,
-  getObjectValue
+  playersDead
 };

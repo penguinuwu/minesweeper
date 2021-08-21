@@ -2,13 +2,13 @@ import bcrypt from 'bcrypt';
 import { PassportStatic } from 'passport';
 import passportLocal from 'passport-local';
 
-import UserModel, { UserClass } from 'models/user';
+import UserModel, { UserDocument } from 'models/user';
 
-// allow Express.User to extend UserClass
+// allow Express.User to extend UserDocument
 // https://stackoverflow.com/a/60981927/9069307
 declare global {
   namespace Express {
-    interface User extends UserClass {}
+    interface User extends UserDocument {}
   }
 }
 
@@ -26,7 +26,7 @@ function passportConfig(passport: PassportStatic) {
       if (!name || !pass) return done(null, false, failMsg);
 
       // find username in database
-      UserModel.findOne({ username: name }, (err: any, user: UserClass) => {
+      UserModel.findOne({ username: name }, (err: any, user: UserDocument) => {
         if (err) {
           console.log(err);
           return done(err);
@@ -48,11 +48,11 @@ function passportConfig(passport: PassportStatic) {
   );
 
   // serialize
-  passport.serializeUser((user: UserClass, done) => done(null, user.id));
+  passport.serializeUser((user: UserDocument, done) => done(null, user.id));
 
   // deserialize
   passport.deserializeUser((id, done) =>
-    UserModel.findById(id, (err: any, user: UserClass) => {
+    UserModel.findById(id, (err: any, user: UserDocument) => {
       if (err) {
         console.log(err);
         return done(err);

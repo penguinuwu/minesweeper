@@ -27,7 +27,7 @@ const RENDER_ENCODER = {
   // x: `<i class='fas fa-bomb fa-stack-2x fa-inverse fa-fw'></i>`,
   // '!': `<i class='fas fa-flag fa-stack-2x fa-inverse fa-fw'></i>`,
   // '?': `<i class='far fa-square fa-stack-2x fa-fw'></i>`
-};
+} as const;
 
 // encoding to translate english to cells
 const CELLS_ENCODER = {
@@ -44,6 +44,6 @@ const CELLS_ENCODER = {
   bomb: 'x',
   flag: '!',
   unknown: '?'
-};
+} as const;
 
 export { RENDER_ENCODER, CELLS_ENCODER };

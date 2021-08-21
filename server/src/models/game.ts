@@ -1,11 +1,12 @@
 import {
+  DocumentType,
   getModelForClass,
   index,
   ModelOptions,
   mongoose,
-  prop,
-  Severity
+  prop
 } from '@typegoose/typegoose';
+import { WhatIsIt } from '@typegoose/typegoose/lib/internal/constants';
 
 @ModelOptions({
   schemaOptions: { timestamps: true }
@@ -49,8 +50,8 @@ class GameClass {
 
   //#region player mapping
   // index of each player { 'User.id': Number }
-  @prop({ required: true, default: {} })
-  public players!: mongoose.Schema.Types.Mixed;
+  @prop({ required: true, default: new Map() }, WhatIsIt.MAP)
+  public players!: mongoose.Types.Map<number>;
   //#endregion
 
   //#region mutable fields
@@ -68,6 +69,16 @@ class GameClass {
 }
 
 const GameModel = getModelForClass(GameClass);
+type GameDocument = DocumentType<GameClass>;
 
-export { GameClass };
+async function findGame(id: string | mongoose.Types.ObjectId | undefined) {
+  if (!id) return null;
+  try {
+    return await GameModel.findById(id).exec();
+  } catch (err) {
+    return null;
+  }
+}
+
+export { GameClass, GameDocument, findGame };
 export default GameModel;
