@@ -1,17 +1,15 @@
 function isInBounds(
-  r: number,
-  c: number,
-  height: number,
-  width: number
+  [row, col]: [number, number],
+  [height, width]: [number, number]
 ): boolean {
-  return 0 <= r && r < height && 0 <= c && c < width;
+  return 0 <= row && row < height && 0 <= col && col < width;
 }
 
 function isInteger(i: string | number) {
   return /^-?\d+$/.test(`${i}`);
 }
 
-function strsToInt(i: string, j: string): [boolean, number, number] {
+function pairStrsToInt(i: string, j: string): [boolean, number, number] {
   if (isInteger(i) && isInteger(j)) {
     return [true, parseInt(i), parseInt(j)];
   } else {
@@ -19,8 +17,8 @@ function strsToInt(i: string, j: string): [boolean, number, number] {
   }
 }
 
-function isElementOf<T>(item: [T, T], a: Array<[T, T]>): boolean {
-  for (let i of a) {
+function pairsIsElementOf<T>(item: [T, T], a: Array<[T, T]>): boolean {
+  for (const i of a) {
     if (i[0] === item[0] && i[1] === item[1]) {
       return true;
     }
@@ -28,33 +26,26 @@ function isElementOf<T>(item: [T, T], a: Array<[T, T]>): boolean {
   return false;
 }
 
-function arrayUnion<T>(a: Array<[T, T]>, b: Array<[T, T]>) {
-  for (let i of b) if (!isElementOf(i, a)) a.push(i);
+function pairsArrayUnion<T>(a: Array<[T, T]>, b: Array<[T, T]>) {
+  for (let i of b) if (!pairsIsElementOf(i, a)) a.push(i);
 }
 
 function arraySum(array: Array<number>): number {
-  let total = 0;
-  for (let value of array) total += value;
-  return total;
+  // https://stackoverflow.com/a/43363105
+  return array.reduce((a, b) => a + b, 0);
 }
 
 // return whether there are any dead players in the game
-function playersDead(
-  playersCount: number,
-  maxLives: number,
-  explosions: Array<number>
-): boolean {
-  for (let i = 0; i < playersCount; i++)
-    if (maxLives - explosions[i] <= 0) return true;
-  return false;
+function playerHasDied(maxLives: number, playerExplosions: number): boolean {
+  return maxLives - playerExplosions <= 0;
 }
 
 export {
   isInBounds,
   isInteger,
-  strsToInt,
-  isElementOf,
-  arrayUnion,
+  pairStrsToInt,
+  pairsIsElementOf,
+  pairsArrayUnion,
   arraySum,
-  playersDead
+  playerHasDied
 };

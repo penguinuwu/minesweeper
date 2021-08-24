@@ -4,11 +4,11 @@ import UserModel from 'models/user';
 async function createUser(name: string, pass: string) {
   try {
     // generate salt and hash
-    let salt = bcrypt.genSaltSync(10);
-    let hash = bcrypt.hashSync(pass, salt);
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(pass, salt);
 
     // create user
-    let newUser = new UserModel({
+    const newUser = new UserModel({
       username: name,
       hash: hash
     });

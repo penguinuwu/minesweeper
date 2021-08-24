@@ -3,11 +3,11 @@ import { CELLS_ENCODER } from 'utils/game/encode';
 import {
   isInBounds,
   isInteger,
-  strsToInt,
-  isElementOf,
-  arrayUnion,
+  pairStrsToInt,
+  pairsIsElementOf,
+  pairsArrayUnion,
   arraySum,
-  playersDead
+  playerHasDied
 } from 'utils/game/helpers';
 
 function nextTurn(game: GameDocument) {
@@ -16,14 +16,14 @@ function nextTurn(game: GameDocument) {
 }
 
 function reveal(i: string | number, j: string | number, game: GameDocument) {
-  let [success, r, c] = strsToInt(`${i}`, `${j}`);
-  if (!success || !isInBounds(r, c, game.height, game.width)) return false;
+  let [success, r, c] = pairStrsToInt(`${i}`, `${j}`);
+  if (!success || !isInBounds([r, c], [game.height, game.width])) return false;
 
   // if clicked on flag or bomb, then do nothing
   if (game.unsolved[r][c] === CELLS_ENCODER['flag']) return false;
   if (game.unsolved[r][c] === CELLS_ENCODER['bomb']) return false;
 
-  // reveal all trivial squares
+  // reveal all trivial blocks
   let queue: Array<[number, number]> = [];
   let checked: Array<[number, number]> = [];
 
@@ -36,13 +36,13 @@ function reveal(i: string | number, j: string | number, game: GameDocument) {
     let surroundCount = parseInt(game.unsolved[r][c]);
 
     // find trivial cells
-    for (let dr of [-1, 0, 1]) {
-      for (let dc of [-1, 0, 1]) {
-        let r2 = r + dr;
-        let c2 = c + dc;
+    for (const dr of [-1, 0, 1]) {
+      for (const dc of [-1, 0, 1]) {
+        const r2 = r + dr;
+        const c2 = c + dc;
 
         // ignore if out of bounds
-        if (!isInBounds(r2, c2, game.height, game.width)) continue;
+        if (!isInBounds([r2, c2], [game.height, game.width])) continue;
 
         // check if its a bomb, flag, or unknown
         if (
@@ -56,7 +56,7 @@ function reveal(i: string | number, j: string | number, game: GameDocument) {
       }
     }
     // there must be surroundCount of surrounding bombs
-    if (surroundCount === 0) arrayUnion(queue, surround);
+    if (surroundCount === 0) pairsArrayUnion(queue, surround);
     // DEBUG: queue
     // console.log(`q ${Array.from(queue)}`)
     // no trivial cells
@@ -78,13 +78,13 @@ function reveal(i: string | number, j: string | number, game: GameDocument) {
 
     if (game.unsolved[r][c] === CELLS_ENCODER['0']) {
       // if revealed cell is 0, then reveal surrounding unknown cells
-      for (let dr of [-1, 0, 1]) {
-        for (let dc of [-1, 0, 1]) {
-          let r2 = r + dr;
-          let c2 = c + dc;
+      for (const dr of [-1, 0, 1]) {
+        for (const dc of [-1, 0, 1]) {
+          const r2 = r + dr;
+          const c2 = c + dc;
           if (
-            !isInBounds(r2, c2, game.height, game.width) ||
-            isElementOf([r2, c2], checked)
+            !isInBounds([r2, c2], [game.height, game.width]) ||
+            pairsIsElementOf([r2, c2], checked)
           )
             continue;
           if (game.unsolved[r2][c2] === CELLS_ENCODER['unknown'])
@@ -97,12 +97,14 @@ function reveal(i: string | number, j: string | number, game: GameDocument) {
     }
   }
 
+  game.markModified('unsolved');
+  game.markModified('explosions');
   return true;
 }
 
 function flag(i: string, j: string, game: GameDocument) {
-  let [success, r, c] = strsToInt(i, j);
-  if (!success || !isInBounds(r, c, game.height, game.width)) return false;
+  let [success, r, c] = pairStrsToInt(i, j);
+  if (!success || !isInBounds([r, c], [game.height, game.width])) return false;
 
   // if clicked on bomb, then do nothing
   if (game.unsolved[r][c] === CELLS_ENCODER['bomb']) return false;
@@ -121,15 +123,15 @@ function flag(i: string, j: string, game: GameDocument) {
     let surroundCount = parseInt(game.unsolved[r][c]);
 
     // check 9 surrounding directions
-    for (let dr of [-1, 0, 1]) {
-      for (let dc of [-1, 0, 1]) {
-        let r2 = r + dr;
-        let c2 = c + dc;
+    for (const dr of [-1, 0, 1]) {
+      for (const dc of [-1, 0, 1]) {
+        const r2 = r + dr;
+        const c2 = c + dc;
 
         // ignore current block and out of bounds
         if (
           (dr === 0 && dc === 0) ||
-          !isInBounds(r2, c2, game.height, game.width)
+          !isInBounds([r2, c2], [game.height, game.width])
         )
           continue;
 
@@ -157,6 +159,8 @@ function flag(i: string, j: string, game: GameDocument) {
     }
   }
 
+  game.markModified('unsolved');
+  game.markModified('flags');
   return true;
 }
 
@@ -164,26 +168,36 @@ function gameEnd(game: GameDocument) {
   if (!game.end) game.end = Date.now();
 }
 
-function checkGameEnd(game: GameDocument) {
+function checkGameEnd(userIndex: number, game: GameDocument) {
   // check end time set
   if (game.end) return true;
 
-  // check if any player has died
-  const playerCount = Object.keys(game.players).length;
-  if (!playersDead(playerCount, game.maxLives, game.explosions)) {
+  // end game if current player has died
+  if (playerHasDied(game.maxLives, game.explosions[userIndex])) {
     gameEnd(game);
     return true;
   }
 
-  // check if there are hidden bombs remaining
-  const revealedBombCount = arraySum(game.flags) + arraySum(game.explosions);
-  if (game.bombLocations.length === revealedBombCount) {
-    // check bomb locations
-    for (let i = 0; i < game.bombLocations.length; i++) {
-      let [r, c] = game.bombLocations[i];
-      if (game.unsolved[r][c] === CELLS_ENCODER['unknown']) return false;
+  // end game if all blocks are revealed
+  const explosionsCount = arraySum(game.explosions);
+  const revealedBlocksCount = game.revealed - explosionsCount;
+  const unrevealedCount = game.height * game.width - game.bombLocations.length;
+  if (unrevealedCount - revealedBlocksCount === 0) {
+    gameEnd(game);
+    return true;
+  }
+
+  // end game if all bomb locations are known
+  const flagsCount = arraySum(game.flags);
+  const knownBombsCount = flagsCount + explosionsCount;
+  if (game.bombLocations.length === knownBombsCount) {
+    // verify that all bombs have been flagged or exploded
+    for (const [r, c] of game.bombLocations) {
+      // found bomb that is not flagged nor exploded, so game no end
+      if (game.unsolved[r][c] === CELLS_ENCODER['unknown']) {
+        return false;
+      }
     }
-    // all bomb locations are revealed
     gameEnd(game);
     return true;
   }
@@ -195,8 +209,8 @@ function getGame(userIndex: number, game: GameDocument) {
   return {
     start: game.start,
     end: game.end,
-    bombs: game.bombLocations.length - game.flags[game.turnIndex],
-    lives: game.maxLives - game.explosions[game.turnIndex],
+    bombs: game.bombLocations.length - game.flags[userIndex],
+    lives: game.maxLives - game.explosions[userIndex],
     // it is my turn if game has started, game has not ended, and index is me
     myTurn: game.start && !game.end && game.turnIndex === userIndex,
     board: game.unsolved

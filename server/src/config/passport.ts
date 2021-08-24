@@ -5,7 +5,7 @@ import passportLocal from 'passport-local';
 import UserModel, { UserDocument } from 'models/user';
 
 // allow Express.User to extend UserDocument
-// https://stackoverflow.com/a/60981927/9069307
+// https://stackoverflow.com/a/60981927
 declare global {
   namespace Express {
     interface User extends UserDocument {}

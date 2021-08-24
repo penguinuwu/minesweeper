@@ -197,7 +197,7 @@ function generateNewBoard(
           let r2 = r + dr;
           let c2 = c + dc;
 
-          if ((dc === 0 && dr === 0) || !isInBounds(r2, c2, height, width))
+          if ((dc === 0 && dr === 0) || !isInBounds([r2, c2], [height, width]))
             continue;
 
           if (newBoard[r2][c2] === CELLS_ENCODER['bomb']) bombCount++;

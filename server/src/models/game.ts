@@ -11,6 +11,9 @@ import {
   WhatIsIt
 } from '@typegoose/typegoose/lib/internal/constants';
 
+// todo: non-ref arrays must set the `type` option ..?
+// https://typegoose.github.io/typegoose/docs/api/decorators/prop/#array-options
+
 @ModelOptions({
   schemaOptions: { timestamps: true },
   options: { allowMixed: Severity.ALLOW }
@@ -45,9 +48,9 @@ class GameClass {
   //#endregion
 
   //#region time in milliseconds elapsed since 1970/01/01, e.g. Date.now()
-  @prop({ required: true, default: undefined })
+  @prop({ required: false }) // undefined until game starts
   public start?: number;
-  @prop({ required: true, default: undefined }) // undefined until game ends
+  @prop({ required: false }) // undefined until game ends
   public end?: number;
   //#endregion
 
@@ -66,7 +69,7 @@ class GameClass {
   public explosions!: Array<number>;
   @prop({ required: true, default: 0 }) // index of current turn player
   public turnIndex!: number;
-  @prop({ required: true, default: 0 }) // amount of revealed blocks
+  @prop({ required: true, default: 0 }) // amount of revealed blocks, including bombs
   public revealed!: number;
   //#endregion
 }

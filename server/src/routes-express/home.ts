@@ -2,15 +2,16 @@ import { Request, Response } from 'express';
 
 function home(req: Request, res: Response) {
   const API_ROUTE = process.env.API_ROUTE;
+  const lobbyID = process.env.LOBBY_ID;
 
-  let home = `
+  const home = `
     <div>
       <h1>home</h1>
       <p>user: ${req.user}</p>
     </div>
   `;
 
-  let register = `
+  const register = `
     <div>
       <h1>register</h1>
       <form action='${API_ROUTE}/register' method='POST'>
@@ -27,7 +28,7 @@ function home(req: Request, res: Response) {
     </div>
   `;
 
-  let login = `
+  const login = `
     <div>
       <h1>login</h1>
       <form action='${API_ROUTE}/login' method='POST'>
@@ -44,7 +45,7 @@ function home(req: Request, res: Response) {
     </div>
   `;
 
-  let logout = `
+  const logout = `
     <div>
       <h1>logout</h1>
       <form action='${API_ROUTE}/logout' method='POST'>
@@ -53,14 +54,10 @@ function home(req: Request, res: Response) {
     </div>
   `;
 
-  let playSolo = `
+  const playSolo = `
     <div>
       <h1>play solo</h1>
       <form action='${API_ROUTE}/play/solo' method='POST'>
-        <div>
-          <label for='shape'>shape</label>
-          <input type='text' id='shape' name='shape' value='square' required>
-        </div>
         <div>
           <label for='difficulty'>difficulty</label>
           <input type='text' id='difficulty' name='difficulty' value='easy'>
@@ -77,14 +74,18 @@ function home(req: Request, res: Response) {
           <label for='bombCount'>bombCount</label>
           <input type='text' id='bombCount' name='bombCount'>
         </div>
+        <div>
+          <label for='maxLives'>maxLives</label>
+          <input type='text' id='maxLives' name='maxLives'>
+        </div>
         <button type='submit'>gen</button>
       </form>
     </div>
   `;
 
-  let socketTest = `
+  const play = `
     <div>
-      <h1>start</h1>
+      <h1>start play</h1>
       <form id="startform">
         <button>Send</button>
       </form>
@@ -92,9 +93,15 @@ function home(req: Request, res: Response) {
     <div>
       <h1>move</h1>
       <form id="moveform">
+        <label for='act'>act</label>
         <input id="act" />
+        <br />
+        <label for='movex'>movex</label>
         <input id="movex" />
+        <br />
+        <label for='movey'>movey</label>
         <input id="movey" />
+        <br />
         <button>Send</button>
       </form>
     </div>
@@ -102,12 +109,12 @@ function home(req: Request, res: Response) {
       <input id="status" />
     </div>
 
-    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+    <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"></script>
 
     <script>
       let socket = io('http://localhost:${process.env.PORT}', {
         path: '${process.env.API_ROUTE}/socket',
-        query: {'lobbyID': '${process.env.DEV}', 'action': 'play'}
+        query: {'lobbyID': '${lobbyID}', 'action': 'play'}
       });
 
       let status = document.getElementById('status');
@@ -127,9 +134,13 @@ function home(req: Request, res: Response) {
       });
 
       function showBoard(array) {
-        for (let r = 0; r < array.length; r++) {
-          console.log(array[r].join());
-        }
+        // print header
+        if (array.length > 0) console.log("  " + [...Array(array[0].length).keys()]);
+        // print rows
+        array.forEach((r, i) => {
+          const row = r.join().replaceAll('0', ' ').replaceAll('?', '█');
+          console.log(i + " " + row);
+        });
       }
 
       socket.on('status', (s) => {status.value = s});
@@ -138,7 +149,7 @@ function home(req: Request, res: Response) {
     </script>
   `;
   return res.status(200).send(`
-    ${socketTest}
+    ${play}
     ${playSolo}
     ${home}
     ${register}

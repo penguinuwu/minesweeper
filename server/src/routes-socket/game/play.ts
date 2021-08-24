@@ -24,7 +24,7 @@ async function play(socket: SessionSocket) {
     socket.emit('status', 'Lobby cannot be found.');
     return socket.disconnect(true);
   }
-  const gameID = lobby.players.get(userID);
+  const gameID = lobby.playerToGame.get(userID);
 
   // get game from database
   const game = await findGame(gameID);
@@ -35,7 +35,8 @@ async function play(socket: SessionSocket) {
 
   // verify user
   const userIndex = game.players.get(userID);
-  if (!userIndex || !isInteger(userIndex)) {
+  // note: userIndex might be 0, so we cannot just check `!userIndex`
+  if (userIndex === undefined || !isInteger(userIndex)) {
     socket.emit('status', 'You cannot access this game.');
     return socket.disconnect(true);
   }
@@ -48,7 +49,7 @@ async function play(socket: SessionSocket) {
 
   // game connection success
   socket.emit('update', getGame(userIndex, game));
-  socket.emit('status', process.env.SUCCESS);
+  // socket.emit('status', 'Success');
 
   socket.on('start', async () => {
     if (game.end) {
@@ -65,7 +66,7 @@ async function play(socket: SessionSocket) {
     game.turnIndex = userIndex;
 
     // reveal top left corner
-    for (let [r, v] of [
+    for (const [r, v] of [
       [0, 0],
       [0, 1],
       [1, 0]
@@ -79,7 +80,7 @@ async function play(socket: SessionSocket) {
       return socket.disconnect(true);
     }
 
-    socket.emit('status', process.env.SUCCESS);
+    // socket.emit('status', 'Success');
     socket.emit('update', getGame(userIndex, game));
   });
 
@@ -99,7 +100,7 @@ async function play(socket: SessionSocket) {
         } else if (moves.action === 'flag') {
           success = flag(moves.row, moves.col, game);
         }
-        socket.emit('status', process.env.SUCCESS);
+        // socket.emit('status', 'Success');
 
         // if move did not succeed, do not update
         if (!success) return;
@@ -108,7 +109,7 @@ async function play(socket: SessionSocket) {
         nextTurn(game);
 
         // possibly end the game
-        let end = checkGameEnd(game);
+        const end = checkGameEnd(userIndex, game);
 
         // save game
         try {
@@ -125,7 +126,7 @@ async function play(socket: SessionSocket) {
 
           if (userID !== process.env.TEMP) {
             // archive game if user is logged in
-            let user = await findUser(userID);
+            const user = await findUser(userID);
             if (user) {
               try {
                 user.pastLobbies.push(lobbyID);

@@ -2,7 +2,7 @@ import User from 'models/user';
 
 async function uniqueUsername(name: string) {
   try {
-    let user = await User.findOne({ username: name }).exec();
+    const user = await User.findOne({ username: name }).exec();
     if (user) return false;
     return true;
   } catch (err) {

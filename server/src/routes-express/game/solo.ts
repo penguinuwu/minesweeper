@@ -13,11 +13,11 @@ async function playSolo(req: Request, res: Response) {
     bombCount: `${req.body.bombCount}`,
     maxLives: `${req.body.maxLives}`
   });
-  if (!game) return res.status(400).send('Invalid game settings.');
+  if (!game) return res.status(400).json('Invalid game settings.');
 
   // add user id or temp user
   const userID = req.user ? `${req.user.id}` : `${process.env.TEMP}`;
-  const userIndex = 1;
+  const userIndex = 0;
   const players = new Map([[userID, userIndex]]);
 
   const flags = [0];
@@ -43,7 +43,7 @@ async function playSolo(req: Request, res: Response) {
     const newLobby = new LobbyModel({
       temp: temp,
       lobbyType: 'solo',
-      players: { [userID]: newGame.id }
+      playerToGame: { [userID]: newGame.id }
     });
     await newLobby.save();
 
@@ -55,10 +55,10 @@ async function playSolo(req: Request, res: Response) {
 
     return res
       .status(200)
-      .send({ lobbyType: newLobby.lobbyType, lobbyID: newLobby.id });
+      .json({ lobbyType: newLobby.lobbyType, lobbyID: newLobby.id });
   } catch (err) {
     console.log(err);
-    return res.status(500).send('Error: could not create game.');
+    return res.status(500).json('Error: could not create game.');
   }
 }
 

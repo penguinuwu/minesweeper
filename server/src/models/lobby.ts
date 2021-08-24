@@ -38,7 +38,7 @@ class LobbyClass {
 
   // game of each player { 'User.id': 'Game.id' }
   @prop({ required: true, default: new Map() }, WhatIsIt.MAP)
-  public players!: mongoose.Types.Map<number>;
+  public playerToGame!: mongoose.Types.Map<number>;
 
   // ['User.id'] of spectators, mongodb does not support Set right now
   @prop({ required: true, default: [], ref: 'UserClass' })
