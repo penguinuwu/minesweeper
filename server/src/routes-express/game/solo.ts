@@ -16,7 +16,7 @@ async function playSolo(req: Request, res: Response) {
   if (!game) return res.status(400).json('Invalid game settings.');
 
   // add user id or temp user
-  const userID = req.user ? `${req.user.id}` : `${process.env.TEMP}`;
+  const userID = req.user ? `${req.user._id}` : `${process.env.TEMP}`;
   const userIndex = 0;
   const players = new Map([[userID, userIndex]]);
 
@@ -43,21 +43,22 @@ async function playSolo(req: Request, res: Response) {
     const newLobby = new LobbyModel({
       temp: temp,
       lobbyType: 'solo',
-      playerToGame: { [userID]: newGame.id }
+      playerToGame: { [userID]: newGame._id }
     });
     await newLobby.save();
 
     // store lobby for user if user is logged in
     if (req.user) {
-      req.user.lobbies.push(newLobby.id);
+      req.user.lobbies.push(newLobby._id);
       await req.user.save();
     }
 
     return res
       .status(200)
-      .json({ lobbyType: newLobby.lobbyType, lobbyID: newLobby.id });
+      .json({ lobbyType: newLobby.lobbyType, lobbyID: newLobby._id });
   } catch (err) {
-    console.log(err);
+    console.error(Date());
+    console.error(err);
     return res.status(500).json('Error: could not create game.');
   }
 }

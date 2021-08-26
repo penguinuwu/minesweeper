@@ -11,42 +11,34 @@ import database from 'config/database';
 import router from 'routes-express/index';
 import { socketEvents, socketWrapper } from 'routes-socket/index';
 
-const app = express();
-app.set('trust proxy', 1);
-
 // create sessions middleware
 const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET || 'secret',
   resave: false,
   saveUninitialized: true,
-  store: MongoStore.create({
-    // set up sessions table in database
-    client: database,
-    collectionName: 'sessions'
-  }),
+  // set up sessions table in database
+  store: MongoStore.create({ client: database }),
   cookie: {
     secure: process.env.DEV ? false : true,
     maxAge: 1000 * 60 * 60 * 24 // 1 day in ms
   }
 });
 
+// set up passport
+passportConfig(passport);
+
+// create express server
+const expressApp = express();
+
+// create http server
+const httpServer = createServer(expressApp);
+
+// trust first proxy
+expressApp.set('trust proxy', 1);
 // use session middleware in express
-app.use(sessionMiddleware);
-
-// use session middleware in socket
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  path: `${process.env.API_ROUTE}/socket`,
-  cors: {
-    origin: process.env.CLIENT_URL,
-    credentials: true
-  }
-});
-io.use(socketWrapper(sessionMiddleware));
-socketEvents(io);
-
+expressApp.use(sessionMiddleware);
 // enable cross-origin resource sharing
-app.use(
+expressApp.use(
   cors({
     origin: process.env.CLIENT_URL,
     methods: 'GET,POST',
@@ -54,18 +46,28 @@ app.use(
     credentials: true
   })
 );
-
 // use express built-in body-parser
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// configure and start passport
-passportConfig(passport);
-app.use(passport.initialize());
-app.use(passport.session());
-
+expressApp.use(express.json());
+expressApp.use(express.urlencoded({ extended: true }));
+// use passport middleware for express
+expressApp.use(passport.initialize());
+expressApp.use(passport.session());
 // use custom routes
-app.use(router);
+expressApp.use(router);
+
+// create socket server
+const socketServer = new Server(httpServer, {
+  path: `${process.env.API_ROUTE}/socket`,
+  cors: {
+    origin: process.env.CLIENT_URL,
+    credentials: true
+  }
+});
+// use passport middleware for socketio
+socketServer.use(socketWrapper(sessionMiddleware));
+socketServer.use(socketWrapper(passport.initialize()));
+socketServer.use(socketWrapper(passport.session()));
+socketEvents(socketServer);
 
 httpServer.listen(process.env.PORT, () => {
   console.log(`Listening at http://localhost:${process.env.PORT}`);

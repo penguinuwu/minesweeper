@@ -3,14 +3,26 @@ import { SessionData } from 'express-session';
 import { Server, Socket } from 'socket.io';
 import play from 'routes-socket/game/play';
 import spectate from 'routes-socket/game/spectate';
+import { UserDocument } from 'models/user';
+import { mongoose } from '@typegoose/typegoose';
+import { LobbyDocument } from 'models/lobby';
+import { GameDocument } from 'models/game';
 
+// express-session ts workaround
+// https://github.com/expressjs/session/issues/799#issuecomment-761549526
 declare module 'express-session' {
   interface SessionData {
-    passport: { user: string };
+    passport: { user?: string };
   }
 }
 interface SessionIncomingMessage extends IncomingMessage {
   session: SessionData;
+  user: UserDocument;
+  userID: string;
+  userIndex: number;
+  lobby: LobbyDocument;
+  lobbyID: string;
+  game: GameDocument;
 }
 interface SessionSocket extends Socket {
   request: SessionIncomingMessage;
@@ -23,17 +35,29 @@ function socketWrapper(middleware: any) {
 }
 
 function socketEvents(io: Server) {
-  io.on('connect', (defaultSocket: Socket) => {
+  io.on('connection', (defaultSocket: Socket) => {
     const socket = <SessionSocket>defaultSocket;
-    socket.request.session.passport;
-    // socket.request.session;
-    if (socket.handshake.query.action === 'play') {
-      play(socket);
-    } else if (socket.handshake.query.action === 'spectate') {
-      spectate(socket);
-    } else {
-      socket.emit('status', 'Coming soon!');
-      socket.disconnect(true);
+    socket.request.lobbyID = `${socket.handshake.query.lobbyID}`;
+
+    if (!socket.request.lobbyID) {
+      socket.emit('status', 'Lobby not entered.');
+      return socket.disconnect(true);
+    }
+
+    // join lobby
+    socket.join(socket.request.lobbyID);
+
+    // check client connection action
+    switch (socket.handshake.query.action) {
+      case 'play':
+        return play(socket);
+
+      case 'spectate':
+        return spectate(socket);
+
+      default:
+        socket.emit('status', 'Coming soon!');
+        return socket.disconnect(true);
     }
   });
 }

@@ -213,6 +213,7 @@ function getGame(userIndex: number, game: GameDocument) {
     lives: game.maxLives - game.explosions[userIndex],
     // it is my turn if game has started, game has not ended, and index is me
     myTurn: game.start && !game.end && game.turnIndex === userIndex,
+    turnIndex: game.turnIndex,
     board: game.unsolved
   };
 }

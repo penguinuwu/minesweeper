@@ -28,9 +28,6 @@ import {
   }
 )
 class GameClass {
-  id!: mongoose.Types.ObjectId;
-  _id!: mongoose.Types.ObjectId;
-
   //#region settings constants
   @prop({ required: true })
   public height!: number;
@@ -55,7 +52,7 @@ class GameClass {
   //#endregion
 
   //#region player mapping
-  // index of each player { 'User.id': Number }
+  // index of each player { 'User._id': Number }
   @prop({ required: true, default: new Map() }, WhatIsIt.MAP)
   public players!: mongoose.Types.Map<number>;
   //#endregion
@@ -82,6 +79,8 @@ async function findGame(id: string | mongoose.Types.ObjectId | undefined) {
   try {
     return await GameModel.findById(id).exec();
   } catch (err) {
+    console.error(Date());
+    console.error(err);
     return null;
   }
 }

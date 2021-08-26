@@ -26,9 +26,6 @@ import { UserClass } from 'models/user';
   }
 )
 class LobbyClass {
-  id!: mongoose.Types.ObjectId;
-  _id!: mongoose.Types.ObjectId;
-
   // delete lobby if it is temporary
   @prop({ required: true, default: true, index: true })
   public temp!: boolean;
@@ -36,11 +33,11 @@ class LobbyClass {
   @prop({ required: true })
   public lobbyType!: 'solo' | 'versus' | 'coop';
 
-  // game of each player { 'User.id': 'Game.id' }
-  @prop({ required: true, default: new Map() }, WhatIsIt.MAP)
-  public playerToGame!: mongoose.Types.Map<number>;
+  // game of each player { 'User._id': 'Game._id' }
+  @prop({ required: true, default: new Map(), ref: 'GameClass' }, WhatIsIt.MAP)
+  public playerToGame!: mongoose.Types.Map<mongoose.Types.ObjectId>;
 
-  // ['User.id'] of spectators, mongodb does not support Set right now
+  // ['User._id'] of spectators, mongodb does not support Set right now
   @prop({ required: true, default: [], ref: 'UserClass' })
   public spectators!: Ref<UserClass>[];
 }
@@ -53,6 +50,8 @@ async function findLobby(id: string | mongoose.Types.ObjectId | undefined) {
   try {
     return await LobbyModel.findById(id).exec();
   } catch (err) {
+    console.error(Date());
+    console.error(err);
     return null;
   }
 }

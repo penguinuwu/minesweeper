@@ -17,7 +17,8 @@ async function createUser(name: string, pass: string) {
     await newUser.save();
     return true;
   } catch (err) {
-    console.log(err);
+    console.error(Date());
+    console.error(err);
     return false;
   }
 }

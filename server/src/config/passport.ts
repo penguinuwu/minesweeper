@@ -28,7 +28,8 @@ function passportConfig(passport: PassportStatic) {
       // find username in database
       UserModel.findOne({ username: name }, (err: any, user: UserDocument) => {
         if (err) {
-          console.log(err);
+          console.error(Date());
+          console.error(err);
           return done(err);
         }
 
@@ -54,7 +55,8 @@ function passportConfig(passport: PassportStatic) {
   passport.deserializeUser((id, done) =>
     UserModel.findById(id, (err: any, user: UserDocument) => {
       if (err) {
-        console.log(err);
+        console.error(Date());
+        console.error(err);
         return done(err);
       }
       if (!user) return done(null, false);

@@ -6,7 +6,8 @@ async function uniqueUsername(name: string) {
     if (user) return false;
     return true;
   } catch (err) {
-    console.log(err);
+    console.error(Date());
+    console.error(err);
     return false;
   }
 }

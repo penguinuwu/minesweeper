@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 
 function home(req: Request, res: Response) {
   const API_ROUTE = process.env.API_ROUTE;
-  const lobbyID = process.env.LOBBY_ID;
+  const lobbyID = '61254e8ff8731a6536a35773';
 
   const home = `
     <div>
@@ -109,8 +109,7 @@ function home(req: Request, res: Response) {
       <input id="status" />
     </div>
 
-    <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"></script>
-
+    <script src="https://cdn.socket.io/4.1.2/socket.io.min.js"></script>
     <script>
       let socket = io('http://localhost:${process.env.PORT}', {
         path: '${process.env.API_ROUTE}/socket',

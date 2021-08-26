@@ -79,7 +79,7 @@ function parseDifficulty(settings: GameSettings) {
   // check if difficulty is easy, intermediate, or expert
   const diff = DEFAULT_DIFFICULTIES.get(settings.difficulty);
   if (diff) return diff;
-  // note: interesting ts flow analysis workaround
+  // note: interesting ts flow analysis workaround (avoiding `diff.has()`)
   // https://github.com/microsoft/TypeScript/issues/13086#issuecomment-268461298
 
   // check if height, width, bombCount, maxLives all exist as integers
