@@ -1,3 +1,13 @@
+# This repository has been moved!
+
+please visit [Minesweeper Multiplayer](https://github.com/catch-the-fish)!
+
+<br/>
+<hr/>
+<hr/>
+<br/>
+<br/>
+
 <h1 align="center">Online Minesweeper</h1>
 <p width="100%" align="center">
 	<a href="https://minesweeper.live">
